@@ -139,7 +139,7 @@ function (bind) {
             var speed;
 
             video = video.split(/:/);
-            speed = parseFloat(video[0]).toFixed(2).replace(/\.00$/, ".0");
+            speed = parseFloat(video[0]).toFixed(2).replace(/\.00$/, '.0');
 
             state.videos[speed] = video[1];
         });
@@ -185,14 +185,16 @@ function (bind) {
     // These are available via the 'state' object. Their context ('this' keyword) is the 'state' object.
     // The magic private function that makes them available and sets up their context is makeFunctionsPublic().
 
-    function setSpeed(newSpeed) {
+    function setSpeed(newSpeed, updateCookie) {
         if (this.speeds.indexOf(newSpeed) !== -1) {
             this.speed = newSpeed;
 
-            $.cookie('video_speed', '' + newSpeed, {
-                expires: 3650,
-                path: '/'
-            });
+            if (updateCookie !== false) {
+                $.cookie('video_speed', '' + newSpeed, {
+                    expires: 3650,
+                    path: '/'
+                });
+            }
         } else {
             this.speed = '1.0';
         }
