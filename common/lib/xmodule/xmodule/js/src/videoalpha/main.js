@@ -2,8 +2,11 @@
 
 // Main module.
 require(
-['videoalpha/display/initialize.js', 'videoalpha/display/video_player.js'],
-function (Initialize, VideoPlayer) {
+[
+    'videoalpha/display/initialize.js',
+    'videoalpha/display/video_control.js',
+],
+function (Initialize, VideoControl) {
     var previousState;
 
     // Because this constructor can be called multiple times on a single page (when
@@ -21,15 +24,15 @@ function (Initialize, VideoPlayer) {
         // Check for existance of previous state, uninitialize it if necessary, and create a new state.
         // Store new state for future invocation of this module consturctor function.
         if (previousState !== null) {
-            previousState.video.onPause();
+            previousState.videoPlayer.onPause();
         }
         state = {};
         previousState = state;
 
         Initialize(state, element);
-        VideoPlayer(state);
+        VideoControl(state);
 
-        console.log('Finished constructing "state" object. state = ');
+        console.log('state is:');
         console.log(state);
     };
 });

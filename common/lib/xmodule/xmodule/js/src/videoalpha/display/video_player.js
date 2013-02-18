@@ -50,16 +50,18 @@ function (HTML5Video, bind) {
         var youTubeId;
 
         state.videoPlayer.playerVars = {
-            /*'controls': 0,
+            'controls': 0,
             'wmode': 'transparent',
             'rel': 0,
             'showinfo': 0,
             'enablejsapi': 1,
-            'modestbranding': 1,
-            'html5': 1*/
+            'modestbranding': 1
         };
 
-        /*
+        if (state.currentPlayerMode !== 'flash') {
+            state.videoPlayer.playerVars.html5 = 1;
+        }
+
         if (state.config.start) {
             state.videoPlayer.playerVars.start = state.config.start;
             state.videoPlayer.playerVars.wmode = 'window';
@@ -67,7 +69,6 @@ function (HTML5Video, bind) {
         if (state.config.end) {
           state.videoPlayer.playerVars.end = state.config.end;
         }
-        */
 
         if (state.videoType === 'html5') {
             state.videoPlayer.player = new HTML5Video.Player(state.el, {
@@ -79,10 +80,10 @@ function (HTML5Video, bind) {
                 }
             });
         } else if (state.videoType === 'youtube') {
-            if ($.cookie('prev_player_type') === 'html5') {
-                youTubeId = state.videos['1.0'];
-            } else {
+            if (state.currentPlayerMode === 'flash') {
                 youTubeId = state.youtubeId();
+            } else {
+                youTubeId = state.youtubeId('1.0');
             }
             state.videoPlayer.player = new YT.Player(state.id, {
                 'playerVars': state.videoPlayer.playerVars,
@@ -100,13 +101,42 @@ function (HTML5Video, bind) {
 
     }
 
+    function reinitAsFlash(state) {
+        state.videoPlayer.player.destroy();
+
+        $.cookie('current_player_mode', 'flash', {
+            expires: 3650,
+            path: '/'
+        });
+        state.currentPlayerMode = 'flash';
+
+        delete state.videoPlayer.playerVars.html5;
+
+        state.videoPlayer.player = new YT.Player(state.id, {
+            'playerVars': state.videoPlayer.playerVars,
+            'videoId': state.youtubeId(),
+            'events': {
+                'onReady': state.videoPlayer.onReady,
+                'onStateChange': state.videoPlayer.onStateChange,
+                'onPlaybackQualityChange': state.videoPlayer.onPlaybackQualityChange
+            }
+        });
+    }
+
     // Public functions start here.
     // These are available via the 'state' object. Their context ('this' keyword) is the 'state' object.
     // The magic private function that makes them available and sets up their context is makeFunctionsPublic().
 
     function pause() { }
 
-    function play() { }
+    function play() {
+        if (this.videoPlayer.player.playVideo) {
+            this.videoPlayer.player.playVideo();
+        }
+
+        console.log('state is:');
+        console.log(this);
+    }
 
     function toggleFullScreen() { }
 
@@ -118,21 +148,86 @@ function (HTML5Video, bind) {
 
     function onSeek() { }
 
-    function onEnded() { }
+    function onEnded() {
+        console.log('this.videoPlayer.PlayerState.ENDED');
+    }
 
-    function onPause() { }
+    function onPause() {
+        console.log('this.videoPlayer.PlayerState.PAUSED');
+    }
 
-    function onPlay() { }
+    function onPlay() {
+        console.log('this.videoPlayer.PlayerState.PLAYING');
+    }
 
-    function onUnstarted() { }
+    function onUnstarted() {
+        console.log('this.videoPlayer.PlayerState.UNSTARTED');
+    }
 
     function handlePlaybackQualityChange() { }
 
     function onPlaybackQualityChange() { }
 
-    function onReady() { console.log('function onReady()'); }
+    function onReady() {
+        var availablePlaybackRates, baseSpeedSubs, _this;
 
-    function onStateChange() { console.log('function onStateChange()'); }
+        console.log('We are in ready function.');
+
+        availablePlaybackRates = this.videoPlayer.player.getAvailablePlaybackRates();
+        if ((this.currentPlayerMode === 'html5') && (this.videoType === 'youtube')) {
+            if (availablePlaybackRates.length === 1) {
+                console.log('We are playing YouTube video in HTML5 mode but have only one speed. Will reload in Flash mode.');
+                reinitAsFlash(this);
+
+                return;
+            } else if (availablePlaybackRates.length > 1) {
+                // We need to synchronize available frame rates with the ones that the user specified.
+                console.log('We are a YouTube video in HTML5 player mode.');
+
+                baseSpeedSubs = this.videos['1.0'];
+                _this = this;
+                $.each(this.videos, function(index, value) {
+                    delete _this.videos[index];
+                });
+                this.speeds = [];
+                $.each(availablePlaybackRates, function(index, value) {
+                    _this.videos[value.toFixed(2).replace(/\.00$/, '.0')] = baseSpeedSubs;
+                    _this.speeds.push(value.toFixed(2).replace(/\.00$/, '.0'));
+                });
+
+                this.setSpeed($.cookie('video_speed'));
+            }
+        }
+
+        if (this.currentPlayerMode === 'html5') {
+            this.videoPlayer.player.setPlaybackRate(this.speed);
+        }
+
+        if (!onTouchBasedDevice()) {
+            this.videoPlayer.play();
+        }
+    }
+
+    function onStateChange() {
+        console.log('function onStateChange()');
+    }
+
+    function onStateChange(event) {
+        switch (event.data) {
+            case this.videoPlayer.PlayerState.UNSTARTED:
+                this.videoPlayer.onUnstarted();
+                break;
+            case this.videoPlayer.PlayerState.PLAYING:
+                this.videoPlayer.onPlay();
+                break;
+            case this.videoPlayer.PlayerState.PAUSED:
+                this.videoPlayer.onPause();
+                break;
+            case this.videoPlayer.PlayerState.ENDED:
+                this.videoPlayer.onEnded();
+                break;
+        }
+    }
 
     function bindExitFullScreen() { }
 });
@@ -142,21 +237,6 @@ function (HTML5Video, bind) {
 
 
 /*
-
-    VideoPlayerAlpha.prototype.initialize = function() {
-      if (window.OldVideoPlayerAlpha && window.OldVideoPlayerAlpha.onPause) {
-        window.OldVideoPlayerAlpha.onPause();
-      }
-      window.OldVideoPlayerAlpha = this;
-      if (this.video.videoType === 'youtube') {
-        this.PlayerState = YT.PlayerState;
-        this.PlayerState.UNSTARTED = -1;
-      } else if (this.video.videoType === 'html5') {
-        this.PlayerState = HTML5Video.PlayerState;
-      }
-      this.currentTime = 0;
-      return this.el = $("#video_" + this.video.id);
-    };
 
     VideoPlayerAlpha.prototype.bind = function() {
       $(this.control).bind('play', this.play).bind('pause', this.pause);
@@ -184,10 +264,6 @@ function (HTML5Video, bind) {
       }
     };
 
-    VideoPlayerAlpha.prototype.render = function() {
-
-    };
-
     VideoPlayerAlpha.prototype.addToolTip = function() {
       return this.$('.add-fullscreen, .hide-subtitles').qtip({
         position: {
@@ -197,68 +273,7 @@ function (HTML5Video, bind) {
       });
     };
 
-    VideoPlayerAlpha.prototype.onReady = function(event) {
-      if (this.video.videoType === 'html5') {
-        this.player.setPlaybackRate(this.video.speed);
-      }
-      if (!onTouchBasedDevice()) {
-        return $('.video-load-complete:first').data('video').player.play();
-      }
-    };
 
-    VideoPlayerAlpha.prototype.onStateChange = function(event) {
-      var availableSpeeds, baseSpeedSubs, prev_player_type, _this;
-      _this = this;
-      switch (event.data) {
-        case this.PlayerState.UNSTARTED:
-          if (this.video.videoType === "youtube") {
-            availableSpeeds = this.player.getAvailablePlaybackRates();
-            prev_player_type = $.cookie('prev_player_type');
-            if (availableSpeeds.length > 1) {
-              if (prev_player_type === 'youtube') {
-                $.cookie('prev_player_type', 'html5', {
-                  expires: 3650,
-                  path: '/'
-                });
-                this.onSpeedChange(null, '1.0', false);
-              } else if (prev_player_type !== 'html5') {
-                $.cookie('prev_player_type', 'html5', {
-                  expires: 3650,
-                  path: '/'
-                });
-              }
-              baseSpeedSubs = this.video.videos["1.0"];
-              $.each(this.video.videos, function(index, value) {
-                return delete _this.video.videos[index];
-              });
-              this.video.speeds = [];
-              $.each(availableSpeeds, function(index, value) {
-                _this.video.videos[value.toFixed(2).replace(/\.00$/, ".0")] = baseSpeedSubs;
-                return _this.video.speeds.push(value.toFixed(2).replace(/\.00$/, ".0"));
-              });
-              this.speedControl.reRender(this.video.speeds, this.video.speed);
-              this.video.videoType = 'html5';
-              this.video.setSpeed($.cookie('video_speed'));
-              this.player.setPlaybackRate(this.video.speed);
-            } else {
-              if (prev_player_type !== 'youtube') {
-                $.cookie('prev_player_type', 'youtube', {
-                  expires: 3650,
-                  path: '/'
-                });
-                this.onSpeedChange(null, $.cookie('video_speed'));
-              }
-            }
-          }
-          return this.onUnstarted();
-        case this.PlayerState.PLAYING:
-          return this.onPlay();
-        case this.PlayerState.PAUSED:
-          return this.onPause();
-        case this.PlayerState.ENDED:
-          return this.onEnded();
-      }
-    };
 
     VideoPlayerAlpha.prototype.onPlaybackQualityChange = function(event, value) {
       var quality;
