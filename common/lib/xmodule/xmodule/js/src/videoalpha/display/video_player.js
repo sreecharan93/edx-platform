@@ -10,23 +10,20 @@ function (HTML5Video, bind) {
     return function (state) {
         state.videoPlayer = {};
 
-        // Functions which will be accessible via 'state' object.
         makeFunctionsPublic(state);
-
-        if (state.videoType === 'youtube') {
-          state.videoPlayer.PlayerState = YT.PlayerState;
-          state.videoPlayer.PlayerState.UNSTARTED = -1;
-        } else { // if (state.videoType === 'html5') {
-          state.videoPlayer.PlayerState = HTML5Video.PlayerState;
-        }
-        state.videoPlayer.currentTime = 0;
-
         renderElements(state);
         bindHandlers();
+        registerCallbacks(state);
     };
 
+    // ***************************************************************
     // Private functions start here.
+    // ***************************************************************
 
+    // function makeFunctionsPublic(state)
+    //
+    //     Functions which will be accessible via 'state' object. When called, these functions will
+    //     get the 'state' object as a context.
     function makeFunctionsPublic(state) {
         state.videoPlayer.pause                       = bind(pause, state);
         state.videoPlayer.play                        = bind(play, state);
@@ -46,8 +43,22 @@ function (HTML5Video, bind) {
         state.videoPlayer.bindExitFullScreen          = bind(bindExitFullScreen, state);
     }
 
+    // function renderElements(state)
+    //
+    //     Create any necessary DOM elements, attach them, and set their initial configuration. Also
+    //     make the created DOM elements available via the 'state' object. Much easier to work this
+    //     way - you don't have to do repeated jQuery element selects.
     function renderElements(state) {
         var youTubeId;
+
+        if (state.videoType === 'youtube') {
+            state.videoPlayer.PlayerState = YT.PlayerState;
+            state.videoPlayer.PlayerState.UNSTARTED = -1;
+        } else { // if (state.videoType === 'html5') {
+            state.videoPlayer.PlayerState = HTML5Video.PlayerState;
+        }
+
+        state.videoPlayer.currentTime = 0;
 
         state.videoPlayer.playerVars = {
             'controls': 0,
@@ -97,21 +108,41 @@ function (HTML5Video, bind) {
         }
     }
 
+    // function bindHandlers(state)
+    //
+    //     Bind any necessary function callbacks to DOM events (click, mousemove, etc.).
     function bindHandlers() {
 
     }
 
+    // function registerCallbacks(state)
+    //
+    //     Register function callbacks to be called by other modules.
+    function registerCallbacks(state) {
+        state.callbacks.videoControl.togglePlaybackPlay.push(state.videoPlayer.play);
+        state.callbacks.videoControl.togglePlaybackPause.push(state.videoPlayer.pause);
+    }
+
+    // function reinitAsFlash(state)
+    //
+    //     When we are about to play a YouTube video in HTML5 mode and discover that we only
+    //     have one available playback rate, we will switch to Flash mode. In Flash speed
+    //     switching is done by reloading videos recorded at differtn frame rates.
     function reinitAsFlash(state) {
+        // Remove from the page current iFrame with HTML5 video.
         state.videoPlayer.player.destroy();
 
+        // Remember for future page loads that we should use Flash mode.
         $.cookie('current_player_mode', 'flash', {
             expires: 3650,
             path: '/'
         });
         state.currentPlayerMode = 'flash';
 
+        // Removed configuration option that requests the HTML5 mode.
         delete state.videoPlayer.playerVars.html5;
 
+        // Reuqest for the creation of a new Flash player
         state.videoPlayer.player = new YT.Player(state.id, {
             'playerVars': state.videoPlayer.playerVars,
             'videoId': state.youtubeId(),
@@ -123,19 +154,22 @@ function (HTML5Video, bind) {
         });
     }
 
+    // ***************************************************************
     // Public functions start here.
     // These are available via the 'state' object. Their context ('this' keyword) is the 'state' object.
     // The magic private function that makes them available and sets up their context is makeFunctionsPublic().
+    // ***************************************************************
 
-    function pause() { }
+    function pause() {
+        if (this.videoPlayer.player.pauseVideo) {
+            this.videoPlayer.player.pauseVideo();
+        }
+    }
 
     function play() {
         if (this.videoPlayer.player.playVideo) {
             this.videoPlayer.player.playVideo();
         }
-
-        console.log('state is:');
-        console.log(this);
     }
 
     function toggleFullScreen() { }
@@ -148,21 +182,23 @@ function (HTML5Video, bind) {
 
     function onSeek() { }
 
-    function onEnded() {
-        console.log('this.videoPlayer.PlayerState.ENDED');
-    }
+    function onEnded() { }
 
     function onPause() {
-        console.log('this.videoPlayer.PlayerState.PAUSED');
+        $.each(this.callbacks.videoPlayer.onPause, function (index, value) {
+            // Each value is a registered callback (JavaScript function object).
+            value();
+        });
     }
 
     function onPlay() {
-        console.log('this.videoPlayer.PlayerState.PLAYING');
+        $.each(this.callbacks.videoPlayer.onPlay, function (index, value) {
+            // Each value is a registered callback (JavaScript function object).
+            value();
+        });
     }
 
-    function onUnstarted() {
-        console.log('this.videoPlayer.PlayerState.UNSTARTED');
-    }
+    function onUnstarted() { }
 
     function handlePlaybackQualityChange() { }
 
@@ -171,18 +207,14 @@ function (HTML5Video, bind) {
     function onReady() {
         var availablePlaybackRates, baseSpeedSubs, _this;
 
-        console.log('We are in ready function.');
-
         availablePlaybackRates = this.videoPlayer.player.getAvailablePlaybackRates();
         if ((this.currentPlayerMode === 'html5') && (this.videoType === 'youtube')) {
             if (availablePlaybackRates.length === 1) {
-                console.log('We are playing YouTube video in HTML5 mode but have only one speed. Will reload in Flash mode.');
                 reinitAsFlash(this);
 
                 return;
             } else if (availablePlaybackRates.length > 1) {
                 // We need to synchronize available frame rates with the ones that the user specified.
-                console.log('We are a YouTube video in HTML5 player mode.');
 
                 baseSpeedSubs = this.videos['1.0'];
                 _this = this;
@@ -206,10 +238,6 @@ function (HTML5Video, bind) {
         if (!onTouchBasedDevice()) {
             this.videoPlayer.play();
         }
-    }
-
-    function onStateChange() {
-        console.log('function onStateChange()');
     }
 
     function onStateChange(event) {

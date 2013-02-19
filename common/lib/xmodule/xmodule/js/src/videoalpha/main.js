@@ -31,9 +31,6 @@ function (Initialize, VideoControl) {
 
         Initialize(state, element);
         VideoControl(state);
-
-        console.log('state is:');
-        console.log(state);
     };
 });
 
