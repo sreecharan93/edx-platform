@@ -1,6 +1,6 @@
 (function (requirejs, require, define) {
 
-// VideoPlayer module.
+// VideoQualityControl module.
 define(
 'videoalpha/display/video_quality_control.js',
 ['videoalpha/display/bind.js'],
@@ -8,6 +8,11 @@ function (bind) {
 
     // VideoQualityControl() function - what this module "exports".
     return function (state) {
+        // Changing quality for now only works for YouTube videos.
+        if (state.videoType !== 'youtube') {
+            return;
+        }
+
         state.videoQualityControl = {};
 
         makeFunctionsPublic(state);

@@ -3,7 +3,10 @@
 // Initialize module.
 define(
 'videoalpha/display/initialize.js',
-['videoalpha/display/bind.js', 'videoalpha/display/video_player.js'],
+[
+    'videoalpha/display/bind.js',
+    'videoalpha/display/video_player.js'
+],
 function (bind, VideoPlayer) {
 
     // Initialize() function - what this module "exports".
@@ -171,7 +174,7 @@ function (bind, VideoPlayer) {
                 window.onYouTubePlayerAPIReady = function() {
                     embed(state);
                 };
-            } else if (state.videoType === 'html5') {
+            } else { // if (state.videoType === 'html5') {
                 window.onHTML5PlayerAPIReady = function() {
                     embed(state);
                 };

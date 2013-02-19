@@ -1,6 +1,6 @@
 (function (requirejs, require, define) {
 
-// VideoPlayer module.
+// VideoControl module.
 define(
 'videoalpha/display/video_control.js',
 ['videoalpha/display/bind.js'],
@@ -120,7 +120,7 @@ function (bind) {
                 // Each value is a registered callback (JavaScript function object).
                 value();
             });
-        } else if (this.videoControl.playPauseState === 'paused') {
+        } else { // if (this.videoControl.playPauseState === 'paused') {
             $.each(this.callbacks.videoControl.togglePlaybackPlay, function (index, value) {
                 // Each value is a registered callback (JavaScript function object).
                 value();

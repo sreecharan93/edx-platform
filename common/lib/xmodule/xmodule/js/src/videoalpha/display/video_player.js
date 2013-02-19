@@ -3,7 +3,10 @@
 // VideoPlayer module.
 define(
 'videoalpha/display/video_player.js',
-['videoalpha/display/html5_video.js', 'videoalpha/display/bind.js'],
+[
+    'videoalpha/display/html5_video.js',
+    'videoalpha/display/bind.js'
+],
 function (HTML5Video, bind) {
 
     // VideoPlayer() function - what this module "exports".
@@ -88,7 +91,7 @@ function (HTML5Video, bind) {
                     'onStateChange': state.videoPlayer.onStateChange
                 }
             });
-        } else if (state.videoType === 'youtube') {
+        } else { // if (state.videoType === 'youtube') {
             if (state.currentPlayerMode === 'flash') {
                 youTubeId = state.youtubeId();
             } else {
