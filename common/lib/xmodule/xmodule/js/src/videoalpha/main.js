@@ -5,8 +5,9 @@ require(
 [
     'videoalpha/display/initialize.js',
     'videoalpha/display/video_control.js',
+    'videoalpha/display/video_quality_control.js',
 ],
-function (Initialize, VideoControl) {
+function (Initialize, VideoControl, VideoQualityControl) {
     var previousState;
 
     // Because this constructor can be called multiple times on a single page (when
@@ -31,6 +32,7 @@ function (Initialize, VideoControl) {
 
         Initialize(state, element);
         VideoControl(state);
+        VideoQualityControl(state);
     };
 });
 

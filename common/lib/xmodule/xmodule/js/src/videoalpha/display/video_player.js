@@ -27,7 +27,6 @@ function (HTML5Video, bind) {
     function makeFunctionsPublic(state) {
         state.videoPlayer.pause                       = bind(pause, state);
         state.videoPlayer.play                        = bind(play, state);
-        state.videoPlayer.toggleFullScreen            = bind(toggleFullScreen, state);
         state.videoPlayer.update                      = bind(update, state);
         state.videoPlayer.onVolumeChange              = bind(onVolumeChange, state);
         state.videoPlayer.onSpeedChange               = bind(onSpeedChange, state);
@@ -40,7 +39,6 @@ function (HTML5Video, bind) {
         state.videoPlayer.onPlaybackQualityChange     = bind(onPlaybackQualityChange, state);
         state.videoPlayer.onStateChange               = bind(onStateChange, state);
         state.videoPlayer.onReady                     = bind(onReady, state);
-        state.videoPlayer.bindExitFullScreen          = bind(bindExitFullScreen, state);
     }
 
     // function renderElements(state)
@@ -121,6 +119,8 @@ function (HTML5Video, bind) {
     function registerCallbacks(state) {
         state.callbacks.videoControl.togglePlaybackPlay.push(state.videoPlayer.play);
         state.callbacks.videoControl.togglePlaybackPause.push(state.videoPlayer.pause);
+
+        state.callbacks.videoQualityControl.toggleQuality.push(state.videoPlayer.handlePlaybackQualityChange);
     }
 
     // function reinitAsFlash(state)
@@ -172,8 +172,6 @@ function (HTML5Video, bind) {
         }
     }
 
-    function toggleFullScreen() { }
-
     function update() { }
 
     function onVolumeChange() { }
@@ -200,9 +198,20 @@ function (HTML5Video, bind) {
 
     function onUnstarted() { }
 
-    function handlePlaybackQualityChange() { }
+    function handlePlaybackQualityChange(value) {
+        this.videoPlayer.player.setPlaybackQuality(value);
+    }
 
-    function onPlaybackQualityChange() { }
+    function onPlaybackQualityChange() {
+        var quality;
+
+        quality = this.videoPlayer.player.getPlaybackQuality();
+
+        $.each(this.callbacks.videoPlayer.onPlaybackQualityChange, function (index, value) {
+            // Each value is a registered callback (JavaScript function object).
+            value(quality);
+        });
+    }
 
     function onReady() {
         var availablePlaybackRates, baseSpeedSubs, _this;
@@ -256,210 +265,6 @@ function (HTML5Video, bind) {
                 break;
         }
     }
-
-    function bindExitFullScreen() { }
 });
 
 }(RequireJS.requirejs, RequireJS.require, RequireJS.define));
-
-
-
-/*
-
-    VideoPlayerAlpha.prototype.bind = function() {
-      $(this.control).bind('play', this.play).bind('pause', this.pause);
-      if (this.video.videoType === 'youtube') {
-        $(this.qualityControl).bind('changeQuality', this.handlePlaybackQualityChange);
-      }
-      if (this.video.show_captions === true) {
-        $(this.caption).bind('seek', this.onSeek);
-      }
-      $(this.speedControl).bind('speedChange', this.onSpeedChange);
-      $(this.progressSlider).bind('seek', this.onSeek);
-      if (this.volumeControl) {
-        $(this.volumeControl).bind('volumeChange', this.onVolumeChange);
-      }
-      $(document).keyup(this.bindExitFullScreen);
-      this.$('.add-fullscreen').click(this.toggleFullScreen);
-      if (!onTouchBasedDevice()) {
-        return this.addToolTip();
-      }
-    };
-
-    VideoPlayerAlpha.prototype.bindExitFullScreen = function(event) {
-      if (this.el.hasClass('fullscreen') && event.keyCode === 27) {
-        return this.toggleFullScreen(event);
-      }
-    };
-
-    VideoPlayerAlpha.prototype.addToolTip = function() {
-      return this.$('.add-fullscreen, .hide-subtitles').qtip({
-        position: {
-          my: 'top right',
-          at: 'top center'
-        }
-      });
-    };
-
-
-
-    VideoPlayerAlpha.prototype.onPlaybackQualityChange = function(event, value) {
-      var quality;
-      quality = this.player.getPlaybackQuality();
-      return this.qualityControl.onQualityChange(quality);
-    };
-
-    VideoPlayerAlpha.prototype.handlePlaybackQualityChange = function(event, value) {
-      return this.player.setPlaybackQuality(value);
-    };
-
-    VideoPlayerAlpha.prototype.onUnstarted = function() {
-      this.control.pause();
-      if (this.video.show_captions === true) {
-        return this.caption.pause();
-      }
-    };
-
-    VideoPlayerAlpha.prototype.onPlay = function() {
-      this.video.log('play_video');
-      if (!this.player.interval) {
-        this.player.interval = setInterval(this.update, 200);
-      }
-      if (this.video.show_captions === true) {
-        this.caption.play();
-      }
-      this.control.play();
-      return this.progressSlider.play();
-    };
-
-    VideoPlayerAlpha.prototype.onPause = function() {
-      this.video.log('pause_video');
-      clearInterval(this.player.interval);
-      this.player.interval = null;
-      if (this.video.show_captions === true) {
-        this.caption.pause();
-      }
-      return this.control.pause();
-    };
-
-    VideoPlayerAlpha.prototype.onEnded = function() {
-      this.control.pause();
-      if (this.video.show_captions === true) {
-        return this.caption.pause();
-      }
-    };
-
-    VideoPlayerAlpha.prototype.onSeek = function(event, time) {
-      this.player.seekTo(time, true);
-      if (this.isPlaying()) {
-        clearInterval(this.player.interval);
-        this.player.interval = setInterval(this.update, 200);
-      } else {
-        this.currentTime = time;
-      }
-      return this.updatePlayTime(time);
-    };
-
-    VideoPlayerAlpha.prototype.onSpeedChange = function(event, newSpeed, updateCookie) {
-      if (this.video.videoType === 'youtube') {
-        this.currentTime = Time.convert(this.currentTime, parseFloat(this.currentSpeed()), newSpeed);
-      }
-      newSpeed = parseFloat(newSpeed).toFixed(2).replace(/\.00$/, '.0');
-      this.video.setSpeed(newSpeed, updateCookie);
-      if (this.video.videoType === 'youtube') {
-        if (this.video.show_captions === true) {
-          this.caption.currentSpeed = newSpeed;
-        }
-      }
-      if (this.video.videoType === 'html5') {
-        this.player.setPlaybackRate(newSpeed);
-      } else if (this.video.videoType === 'youtube') {
-        if (this.isPlaying()) {
-          this.player.loadVideoById(this.video.youtubeId(), this.currentTime);
-        } else {
-          this.player.cueVideoById(this.video.youtubeId(), this.currentTime);
-        }
-      }
-      if (this.video.videoType === 'youtube') {
-        return this.updatePlayTime(this.currentTime);
-      }
-    };
-
-    VideoPlayerAlpha.prototype.onVolumeChange = function(event, volume) {
-      return this.player.setVolume(volume);
-    };
-
-    VideoPlayerAlpha.prototype.update = function() {
-      if (this.currentTime = this.player.getCurrentTime()) {
-        return this.updatePlayTime(this.currentTime);
-      }
-    };
-
-    VideoPlayerAlpha.prototype.updatePlayTime = function(time) {
-      var progress;
-      progress = Time.format(time) + ' / ' + Time.format(this.duration());
-      this.$(".vidtime").html(progress);
-      if (this.video.show_captions === true) {
-        this.caption.updatePlayTime(time);
-      }
-      return this.progressSlider.updatePlayTime(time, this.duration());
-    };
-
-    VideoPlayerAlpha.prototype.toggleFullScreen = function(event) {
-      event.preventDefault();
-      if (this.el.hasClass('fullscreen')) {
-        this.$('.add-fullscreen').attr('title', 'Fill browser');
-        this.el.removeClass('fullscreen');
-      } else {
-        this.el.addClass('fullscreen');
-        this.$('.add-fullscreen').attr('title', 'Exit fill browser');
-      }
-      if (this.video.show_captions === true) {
-        return this.caption.resize();
-      }
-    };
-
-    VideoPlayerAlpha.prototype.play = function() {
-      if (this.player.playVideo) {
-        return this.player.playVideo();
-      }
-    };
-
-    VideoPlayerAlpha.prototype.isPlaying = function() {
-      return this.player.getPlayerState() === this.PlayerState.PLAYING;
-    };
-
-    VideoPlayerAlpha.prototype.pause = function() {
-      if (this.player.pauseVideo) {
-        return this.player.pauseVideo();
-      }
-    };
-
-    VideoPlayerAlpha.prototype.duration = function() {
-      var duration;
-      duration = this.player.getDuration();
-      if (isFinite(duration) === false) {
-        duration = this.video.getDuration();
-      }
-      return duration;
-    };
-
-    VideoPlayerAlpha.prototype.currentSpeed = function() {
-      return this.video.speed;
-    };
-
-    VideoPlayerAlpha.prototype.volume = function(value) {
-      if (value != null) {
-        return this.player.setVolume(value);
-      } else {
-        return this.player.getVolume();
-      }
-    };
-
-    return VideoPlayerAlpha;
-
-  })(SubviewAlpha);
-
-}).call(this);
-
-*/

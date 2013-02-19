@@ -143,11 +143,15 @@ function (bind, VideoPlayer) {
         state.callbacks = {
             'videoPlayer': {
                 'onPlay': [],
-                'onPause': []
+                'onPause': [],
+                'onPlaybackQualityChange': []
             },
             'videoControl': {
                 'togglePlaybackPlay': [],
                 'togglePlaybackPause': []
+            },
+            'videoQualityControl': {
+                'toggleQuality': []
             }
         };
 
@@ -165,12 +169,10 @@ function (bind, VideoPlayer) {
         } else {
             if (state.videoType === 'youtube') {
                 window.onYouTubePlayerAPIReady = function() {
-                    console.log('Now we are ready. Embeding.');
                     embed(state);
                 };
             } else if (state.videoType === 'html5') {
                 window.onHTML5PlayerAPIReady = function() {
-                    console.log('Now we are ready. Embeding.');
                     embed(state);
                 };
             }
