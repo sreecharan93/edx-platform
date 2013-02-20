@@ -24,10 +24,9 @@ function (bind, VideoPlayer) {
     //     Functions which will be accessible via 'state' object. When called, these functions will
     //     get the 'state' object as a context.
     function makeFunctionsPublic(state) {
-        state.setSpeed = bind(setSpeed, state);
-        state.youtubeId = bind(youtubeId, state);
+        state.setSpeed    = bind(setSpeed, state);
+        state.youtubeId   = bind(youtubeId, state);
         state.getDuration = bind(getDuration, state);
-        state.log = bind(log, state);
     }
 
     // function renderElements(state)
@@ -147,7 +146,9 @@ function (bind, VideoPlayer) {
             'videoPlayer': {
                 'onPlay': [],
                 'onPause': [],
-                'onPlaybackQualityChange': []
+                'onEnded': [],
+                'onPlaybackQualityChange': [],
+                'updatePlayTime': []
             },
             'videoControl': {
                 'togglePlaybackPlay': [],
@@ -155,6 +156,10 @@ function (bind, VideoPlayer) {
             },
             'videoQualityControl': {
                 'toggleQuality': []
+            },
+            'videoProgressSlider': {
+                'onSlide': [],
+                'onStop': []
             }
         };
 
@@ -290,27 +295,6 @@ function (bind, VideoPlayer) {
 
     function getDuration() {
         return this.metadata[this.youtubeId()].duration;
-    }
-
-    function log(eventName) {
-        var logInfo;
-
-        logInfo = {
-            'id':          this.id,
-            'code':        this.youtubeId(),
-            'currentTime': this.player.currentTime,
-            'speed':       this.speed
-        };
-
-        if (this.videoType === 'youtube') {
-            logInfo.code = this.youtubeId();
-        } else {
-            if (this.videoType === 'html5') {
-                logInfo.code = 'html5';
-            }
-        }
-
-        Logger.log(eventName, logInfo);
     }
 
 });

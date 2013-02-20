@@ -42,6 +42,10 @@ function (HTML5Video, bind) {
         state.videoPlayer.onPlaybackQualityChange     = bind(onPlaybackQualityChange, state);
         state.videoPlayer.onStateChange               = bind(onStateChange, state);
         state.videoPlayer.onReady                     = bind(onReady, state);
+        state.videoPlayer.updatePlayTime              = bind(updatePlayTime, state);
+        state.videoPlayer.isPlaying                   = bind(isPlaying, state);
+        state.videoPlayer.log                         = bind(log, state);
+        state.videoPlayer.duration                    = bind(duration, state);
     }
 
     // function renderElements(state)
@@ -124,6 +128,8 @@ function (HTML5Video, bind) {
         state.callbacks.videoControl.togglePlaybackPause.push(state.videoPlayer.pause);
 
         state.callbacks.videoQualityControl.toggleQuality.push(state.videoPlayer.handlePlaybackQualityChange);
+        state.callbacks.videoProgressSlider.onSlide.push(state.videoPlayer.onSeek);
+        state.callbacks.videoProgressSlider.onStop.push(state.videoPlayer.onSeek);
     }
 
     // function reinitAsFlash(state)
@@ -175,17 +181,44 @@ function (HTML5Video, bind) {
         }
     }
 
-    function update() { }
+    function update() {
+        this.videoPlayer.currentTime = this.videoPlayer.player.getCurrentTime();
+
+        if (isFinite(this.videoPlayer.currentTime) === true) {
+            this.videoPlayer.updatePlayTime(this.videoPlayer.currentTime);
+        }
+    }
 
     function onVolumeChange() { }
 
     function onSpeedChange() { }
 
-    function onSeek() { }
+    function onSeek(time) {
+        this.videoPlayer.player.seekTo(time, true);
 
-    function onEnded() { }
+        if (this.videoPlayer.isPlaying()) {
+            clearInterval(this.videoPlayer.updateInterval);
+            this.videoPlayer.updateInterval = setInterval(this.videoPlayer.update, 200);
+        } else {
+            this.videoPlayer.currentTime = time;
+        }
+
+        this.videoPlayer.updatePlayTime(time);
+    }
+
+    function onEnded() {
+        $.each(this.callbacks.videoPlayer.onEnded, function (index, value) {
+            // Each value is a registered callback (JavaScript function object).
+            value();
+        });
+    }
 
     function onPause() {
+        this.videoPlayer.log('pause_video');
+
+        clearInterval(this.videoPlayer.updateInterval);
+        delete this.videoPlayer.updateInterval;
+
         $.each(this.callbacks.videoPlayer.onPause, function (index, value) {
             // Each value is a registered callback (JavaScript function object).
             value();
@@ -193,6 +226,12 @@ function (HTML5Video, bind) {
     }
 
     function onPlay() {
+        this.videoPlayer.log('play_video');
+
+        if (!this.videoPlayer.updateInterval) {
+            this.videoPlayer.updateInterval = setInterval(this.videoPlayer.update, 200);
+        }
+
         $.each(this.callbacks.videoPlayer.onPlay, function (index, value) {
             // Each value is a registered callback (JavaScript function object).
             value();
@@ -236,6 +275,7 @@ function (HTML5Video, bind) {
                 this.speeds = [];
                 $.each(availablePlaybackRates, function(index, value) {
                     _this.videos[value.toFixed(2).replace(/\.00$/, '.0')] = baseSpeedSubs;
+
                     _this.speeds.push(value.toFixed(2).replace(/\.00$/, '.0'));
                 });
 
@@ -267,6 +307,55 @@ function (HTML5Video, bind) {
                 this.videoPlayer.onEnded();
                 break;
         }
+    }
+
+    function updatePlayTime(time) {
+        var duration;
+
+        duration = this.videoPlayer.duration();
+
+        // TODO: this.caption.updatePlayTime(time);
+
+        $.each(this.callbacks.videoPlayer.updatePlayTime, function (index, value) {
+            // Each value is a registered callback (JavaScript function object).
+            value(time, duration);
+        });
+    }
+
+    function isPlaying() {
+        return this.videoPlayer.player.getPlayerState() === this.videoPlayer.PlayerState.PLAYING;
+    }
+
+    function duration() {
+        var duration;
+
+        duration = this.videoPlayer.player.getDuration();
+        if (isFinite(duration) === false) {
+            duration = this.getDuration();
+        }
+
+        return duration;
+    }
+
+    function log(eventName) {
+        var logInfo;
+
+        logInfo = {
+            'id':          this.id,
+            'code':        this.youtubeId(),
+            'currentTime': this.videoPlayer.currentTime,
+            'speed':       this.speed
+        };
+
+        if (this.videoType === 'youtube') {
+            logInfo.code = this.youtubeId();
+        } else {
+            if (this.videoType === 'html5') {
+                logInfo.code = 'html5';
+            }
+        }
+
+        Logger.log(eventName, logInfo);
     }
 });
 

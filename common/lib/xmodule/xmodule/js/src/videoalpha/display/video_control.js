@@ -30,6 +30,7 @@ function (bind) {
         state.videoControl.togglePlayback   = bind(togglePlayback, state);
         state.videoControl.toggleFullScreen = bind(toggleFullScreen, state);
         state.videoControl.exitFullScreen   = bind(exitFullScreen, state);
+        state.videoControl.updateVcrVidTime = bind(updateVcrVidTime, state);
     }
 
     // function renderElements(state)
@@ -56,9 +57,11 @@ function (bind) {
         state.videoControl.el = state.el.find('.video-controls');
         state.videoControl.el.append(el);
 
+        state.videoControl.sliderEl            = state.videoControl.el.find('.slider');
         state.videoControl.playPauseEl         = state.videoControl.el.find('.video_control');
         state.videoControl.secondaryControlsEl = state.videoControl.el.find('.secondary-controls');
         state.videoControl.fullScreenEl        = state.videoControl.el.find('.add-fullscreen');
+        state.videoControl.vidTimeEl           = state.videoControl.el.find('.vidtime');
 
         state.videoControl.fullScreenState = false;
 
@@ -94,6 +97,8 @@ function (bind) {
     function registerCallbacks(state) {
         state.callbacks.videoPlayer.onPlay.push(state.videoControl.play);
         state.callbacks.videoPlayer.onPause.push(state.videoControl.pause);
+        state.callbacks.videoPlayer.onEnded.push(state.videoControl.pause);
+        state.callbacks.videoPlayer.updatePlayTime.push(state. videoControl.updateVcrVidTime);
     }
 
     // ***************************************************************
@@ -150,6 +155,14 @@ function (bind) {
         if ((this.el.hasClass('fullscreen') === true) && (event.keyCode === 27)) {
             this.videoControl.toggleFullScreen(event);
         }
+    }
+
+    function updateVcrVidTime(time, duration) {
+        var progress;
+
+        progress = Time.format(time) + ' / ' + Time.format(duration);
+
+        this.videoControl.vidTimeEl.html(progress);
     }
 
 });
