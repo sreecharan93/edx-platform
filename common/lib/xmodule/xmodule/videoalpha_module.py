@@ -66,6 +66,7 @@ class VideoAlphaModule(VideoAlphaFields, XModule):
             resource_string(__name__, 'js/src/videoalpha/display/video_progress_slider.js'),
             resource_string(__name__, 'js/src/videoalpha/display/video_volume_control.js'),
             resource_string(__name__, 'js/src/videoalpha/display/video_speed_control.js'),
+            resource_string(__name__, 'js/src/videoalpha/display/video_caption.js'),
             resource_string(__name__, 'js/src/videoalpha/main.js')
         ]
     }

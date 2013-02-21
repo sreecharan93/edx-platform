@@ -204,9 +204,11 @@ function (HTML5Video, bind) {
         newSpeed = parseFloat(newSpeed).toFixed(2).replace(/\.00$/, '.0');
         this.setSpeed(newSpeed, updateCookie);
         if (this.currentPlayerMode === 'flash') {
-            if (this.video.show_captions === true) {
-              this.caption.currentSpeed = newSpeed;
-            }
+            // TODO.
+
+            // if (this.video.show_captions === true) {
+                // this.caption.currentSpeed = newSpeed;
+            // }
         }
         if (this.currentPlayerMode === 'html5') {
             this.videoPlayer.player.setPlaybackRate(newSpeed);

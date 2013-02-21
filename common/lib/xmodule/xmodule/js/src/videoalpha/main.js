@@ -8,7 +8,8 @@ require(
     'videoalpha/display/video_quality_control.js',
     'videoalpha/display/video_progress_slider.js',
     'videoalpha/display/video_volume_control.js',
-    'videoalpha/display/video_speed_control.js'
+    'videoalpha/display/video_speed_control.js',
+    'videoalpha/display/video_caption.js'
 ],
 function (
     Initialize,
@@ -16,7 +17,8 @@ function (
     VideoQualityControl,
     VideoProgressSlider,
     VideoVolumeControl,
-    VideoSpeedControl
+    VideoSpeedControl,
+    VideoCaption
 ) {
     var previousState;
 
@@ -46,6 +48,7 @@ function (
         VideoProgressSlider(state);
         VideoVolumeControl(state);
         VideoSpeedControl(state);
+        VideoCaption(state);
     };
 });
 
