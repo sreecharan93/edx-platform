@@ -31,7 +31,6 @@ function (HTML5Video, bind) {
         state.videoPlayer.pause                       = bind(pause, state);
         state.videoPlayer.play                        = bind(play, state);
         state.videoPlayer.update                      = bind(update, state);
-        state.videoPlayer.onVolumeChange              = bind(onVolumeChange, state);
         state.videoPlayer.onSpeedChange               = bind(onSpeedChange, state);
         state.videoPlayer.onSeek                      = bind(onSeek, state);
         state.videoPlayer.onEnded                     = bind(onEnded, state);
@@ -46,6 +45,7 @@ function (HTML5Video, bind) {
         state.videoPlayer.isPlaying                   = bind(isPlaying, state);
         state.videoPlayer.log                         = bind(log, state);
         state.videoPlayer.duration                    = bind(duration, state);
+        state.videoPlayer.onVolumeChange              = bind(onVolumeChange, state);
     }
 
     // function renderElements(state)
@@ -130,6 +130,10 @@ function (HTML5Video, bind) {
         state.callbacks.videoQualityControl.toggleQuality.push(state.videoPlayer.handlePlaybackQualityChange);
         state.callbacks.videoProgressSlider.onSlide.push(state.videoPlayer.onSeek);
         state.callbacks.videoProgressSlider.onStop.push(state.videoPlayer.onSeek);
+
+        state.callbacks.videoVolumeControl.onChange.push(state.videoPlayer.onVolumeChange);
+
+        state.callbacks.videoSpeedControl.changeVideoSpeed.push(state.videoPlayer.onSpeedChange);
     }
 
     // function reinitAsFlash(state)
@@ -189,9 +193,34 @@ function (HTML5Video, bind) {
         }
     }
 
-    function onVolumeChange() { }
-
-    function onSpeedChange() { }
+    function onSpeedChange(newSpeed, updateCookie) {
+        if (this.currentPlayerMode === 'flash') {
+            this.videoPlayer.currentTime = Time.convert(
+                this.videoPlayer.currentTime,
+                parseFloat(this.speed),
+                newSpeed
+            );
+        }
+        newSpeed = parseFloat(newSpeed).toFixed(2).replace(/\.00$/, '.0');
+        this.setSpeed(newSpeed, updateCookie);
+        if (this.currentPlayerMode === 'flash') {
+            if (this.video.show_captions === true) {
+              this.caption.currentSpeed = newSpeed;
+            }
+        }
+        if (this.currentPlayerMode === 'html5') {
+            this.videoPlayer.player.setPlaybackRate(newSpeed);
+        } else { // if (this.currentPlayerMode === 'flash') {
+            if (this.videoPlayer.isPlaying()) {
+                this.videoPlayer.player.loadVideoById(this.youtubeId(), this.videoPlayer.currentTime);
+            } else {
+                this.videoPlayer.player.cueVideoById(this.youtubeId(), this.videoPlayer.currentTime);
+            }
+        }
+        if (this.currentPlayerMode === 'flash') {
+            this.videoPlayer.updatePlayTime(this.videoPlayer.currentTime);
+        }
+    }
 
     function onSeek(time) {
         this.videoPlayer.player.seekTo(time, true);
@@ -279,6 +308,11 @@ function (HTML5Video, bind) {
                     _this.speeds.push(value.toFixed(2).replace(/\.00$/, '.0'));
                 });
 
+                $.each(this.callbacks.videoPlayer.onSpeedSetChange, function (index, value) {
+                    // Each value is a registered callback (JavaScript function object).
+                    value(_this.speeds, _this.speed);
+                });
+
                 this.setSpeed($.cookie('video_speed'));
             }
         }
@@ -356,6 +390,10 @@ function (HTML5Video, bind) {
         }
 
         Logger.log(eventName, logInfo);
+    }
+
+    function onVolumeChange(volume) {
+        this.videoPlayer.player.setVolume(volume);
     }
 });
 

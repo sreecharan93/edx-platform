@@ -148,7 +148,8 @@ function (bind, VideoPlayer) {
                 'onPause': [],
                 'onEnded': [],
                 'onPlaybackQualityChange': [],
-                'updatePlayTime': []
+                'updatePlayTime': [],
+                'onSpeedSetChange': []
             },
             'videoControl': {
                 'togglePlaybackPlay': [],
@@ -160,6 +161,12 @@ function (bind, VideoPlayer) {
             'videoProgressSlider': {
                 'onSlide': [],
                 'onStop': []
+            },
+            'videoVolumeControl': {
+                'onChange': []
+            },
+            'videoSpeedControl': {
+                'changeVideoSpeed': []
             }
         };
 
