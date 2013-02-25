@@ -167,6 +167,9 @@ function (bind, VideoPlayer) {
             },
             'videoSpeedControl': {
                 'changeVideoSpeed': []
+            },
+            'videoCaption': {
+                'seekPlayer': []
             }
         };
 

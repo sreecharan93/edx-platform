@@ -134,6 +134,8 @@ function (HTML5Video, bind) {
         state.callbacks.videoVolumeControl.onChange.push(state.videoPlayer.onVolumeChange);
 
         state.callbacks.videoSpeedControl.changeVideoSpeed.push(state.videoPlayer.onSpeedChange);
+
+        state.callbacks.videoCaption.seekPlayer.push(state.videoPlayer.onSeek);
     }
 
     // function reinitAsFlash(state)

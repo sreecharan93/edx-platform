@@ -41,6 +41,7 @@ function (bind) {
         state.videoCaption.seekPlayer          = bind(seekPlayer, state);
         state.videoCaption.hideCaptions        = bind(hideCaptions, state);
         state.videoCaption.calculateOffset     = bind(calculateOffset, state);
+        state.videoCaption.updatePlayTime     = bind(updatePlayTime, state);
     }
 
     // function renderElements(state)
@@ -91,7 +92,7 @@ function (bind) {
     //
     //     Register function callbacks to be called by other modules.
     function registerCallbacks(state) {
-
+        state.callbacks.videoPlayer.updatePlayTime.push(state.videoCaption.updatePlayTime);
     }
 
     function fetchCaption(state) {
@@ -181,7 +182,7 @@ function (bind) {
 
     function scrollCaption() {
         if (!this.videoCaption.frozen && this.videoCaption.subtitlesEl.find('.current:first').length) {
-            this.videoCaption.subtitlesEl.scrollTo(this.$('.subtitles .current:first'), {
+            this.videoCaption.subtitlesEl.scrollTo(this.videoCaption.subtitlesEl.find('.current:first'), {
                 'offset': -this.videoCaption.calculateOffset(this.videoCaption.subtitlesEl.find('.current:first'))
             });
         }
@@ -257,6 +258,11 @@ function (bind) {
 
         // TODO.
         // $(this).trigger('seek', time);
+
+        $.each(this.callbacks.videoCaption.seekPlayer, function (index, value) {
+            // Each value is a registered callback (JavaScript function object).
+            value(time);
+        });
     }
 
     function calculateOffset(element) {
