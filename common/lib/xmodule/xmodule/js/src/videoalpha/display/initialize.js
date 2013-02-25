@@ -94,9 +94,6 @@ function (bind, VideoPlayer) {
             state.setSpeed($.cookie('video_speed'));
         }
 
-        // TODO: Check after refactoring whether this can be removed.
-        state.el.addClass('video-load-complete');
-
         // Configure displaying of captions.
         //
         // Option
@@ -153,7 +150,8 @@ function (bind, VideoPlayer) {
             },
             'videoControl': {
                 'togglePlaybackPlay': [],
-                'togglePlaybackPause': []
+                'togglePlaybackPause': [],
+                'toggleFullScreen': []
             },
             'videoQualityControl': {
                 'toggleQuality': []

@@ -146,9 +146,11 @@ function (bind) {
             this.videoControl.fullScreenEl.attr('title', 'Exit fill browser');
         }
 
-        // TODO:
-        //     if @video.show_captions is true
-        //       @caption.resize()
+
+        $.each(this.callbacks.videoControl.toggleFullScreen, function (index, value) {
+            // Each value is a registered callback (JavaScript function object).
+            value();
+        });
     }
 
     function exitFullScreen(event) {

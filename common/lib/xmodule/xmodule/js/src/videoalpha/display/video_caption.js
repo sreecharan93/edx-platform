@@ -41,7 +41,7 @@ function (bind) {
         state.videoCaption.seekPlayer          = bind(seekPlayer, state);
         state.videoCaption.hideCaptions        = bind(hideCaptions, state);
         state.videoCaption.calculateOffset     = bind(calculateOffset, state);
-        state.videoCaption.updatePlayTime     = bind(updatePlayTime, state);
+        state.videoCaption.updatePlayTime      = bind(updatePlayTime, state);
     }
 
     // function renderElements(state)
@@ -93,6 +93,7 @@ function (bind) {
     //     Register function callbacks to be called by other modules.
     function registerCallbacks(state) {
         state.callbacks.videoPlayer.updatePlayTime.push(state.videoCaption.updatePlayTime);
+        state.callbacks.videoControl.toggleFullScreen.push(state.videoCaption.resize);
     }
 
     function fetchCaption(state) {
@@ -255,9 +256,6 @@ function (bind) {
 
         event.preventDefault();
         time = Math.round(Time.convert($(event.target).data('start'), '1.0', this.speed) / 1000);
-
-        // TODO.
-        // $(this).trigger('seek', time);
 
         $.each(this.callbacks.videoCaption.seekPlayer, function (index, value) {
             // Each value is a registered callback (JavaScript function object).

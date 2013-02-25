@@ -205,13 +205,7 @@ function (HTML5Video, bind) {
         }
         newSpeed = parseFloat(newSpeed).toFixed(2).replace(/\.00$/, '.0');
         this.setSpeed(newSpeed, updateCookie);
-        if (this.currentPlayerMode === 'flash') {
-            // TODO.
 
-            // if (this.video.show_captions === true) {
-                // this.caption.currentSpeed = newSpeed;
-            // }
-        }
         if (this.currentPlayerMode === 'html5') {
             this.videoPlayer.player.setPlaybackRate(newSpeed);
         } else { // if (this.currentPlayerMode === 'flash') {
@@ -351,8 +345,6 @@ function (HTML5Video, bind) {
         var duration;
 
         duration = this.videoPlayer.duration();
-
-        // TODO: this.caption.updatePlayTime(time);
 
         $.each(this.callbacks.videoPlayer.updatePlayTime, function (index, value) {
             // Each value is a registered callback (JavaScript function object).
