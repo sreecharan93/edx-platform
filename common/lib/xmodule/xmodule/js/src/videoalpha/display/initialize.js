@@ -305,6 +305,51 @@ function (bind, VideoPlayer) {
         return this.metadata[this.youtubeId()].duration;
     }
 
+     /*
+     * Because jQuery events can be triggered on some jQuery object, we must make sure that
+     * we don't trigger an event on an undefined object. For this we will have an in-between
+     * method that will check for the existance of an object before triggering an event on it.
+     *
+     * @objChain is an array that contains the chain of properties on the 'state' object. For
+     * example, if
+     *
+     *     objChain = ['videoPlayer', 'stopVideo'];
+     *
+     * then we will check for the existance of the
+     *
+     *     state.videoPlayer.stopVideo
+     *
+     * object, and, if found to be present, will trigger the specified event on this object.
+     *
+     * @eventName - the name of the event to trigger on the specified object.
+     */
+    function trigger(objChain, eventName, extraParameters) {
+        var tmpObj;
+
+        // Remember that 'this' is the 'state' object.
+        tmpObj = this;
+
+        getFinalObj(0);
+
+        if (tmpObj === null) {
+            return false;
+        }
+
+        tmpObj.trigger(eventName, extraParameters);
+
+        return true;
+
+        function getFinalObj(i) {
+            if (objChain.length !== i) {
+                if (tmpObj.hasOwnProperty(objChain[i]) === true) {
+                    tmpObj = tmpObj[objChain[i]];
+                    getFinalObj(i + 1);
+                } else {
+                    tmpObj = null;
+                }
+            }
+        }
+    }
 });
 
 }(RequireJS.requirejs, RequireJS.require, RequireJS.define));

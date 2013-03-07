@@ -43,6 +43,7 @@ function (
         previousState = state;
 
         Initialize(state, element);
+
         VideoControl(state);
         VideoQualityControl(state);
         VideoProgressSlider(state);
