@@ -13,7 +13,6 @@ function (bind) {
         makeFunctionsPublic(state);
         renderElements(state);
         bindHandlers(state);
-        registerCallbacks(state);
     };
 
     // ***************************************************************
@@ -91,16 +90,6 @@ function (bind) {
         $(document).on('keyup', state.videoControl.exitFullScreen);
     }
 
-    // function registerCallbacks(state)
-    //
-    //     Register function callbacks to be called by other modules.
-    function registerCallbacks(state) {
-        state.callbacks.videoPlayer.onPlay.push(state.videoControl.play);
-        state.callbacks.videoPlayer.onPause.push(state.videoControl.pause);
-        state.callbacks.videoPlayer.onEnded.push(state.videoControl.pause);
-        state.callbacks.videoPlayer.updatePlayTime.push(state. videoControl.updateVcrVidTime);
-    }
-
     // ***************************************************************
     // Public functions start here.
     // These are available via the 'state' object. Their context ('this' keyword) is the 'state' object.
@@ -121,15 +110,9 @@ function (bind) {
         event.preventDefault();
 
         if (this.videoControl.playPauseState === 'playing') {
-            $.each(this.callbacks.videoControl.togglePlaybackPause, function (index, value) {
-                // Each value is a registered callback (JavaScript function object).
-                value();
-            });
+            this.trigger(['videoPlayer', 'pause']);
         } else { // if (this.videoControl.playPauseState === 'paused') {
-            $.each(this.callbacks.videoControl.togglePlaybackPlay, function (index, value) {
-                // Each value is a registered callback (JavaScript function object).
-                value();
-            });
+            this.trigger(['videoPlayer', 'play']);
         }
     }
 
@@ -146,11 +129,7 @@ function (bind) {
             this.videoControl.fullScreenEl.attr('title', 'Exit fill browser');
         }
 
-
-        $.each(this.callbacks.videoControl.toggleFullScreen, function (index, value) {
-            // Each value is a registered callback (JavaScript function object).
-            value();
-        });
+        this.trigger(['videoCaption', 'resize']);
     }
 
     function exitFullScreen(event) {
@@ -159,12 +138,8 @@ function (bind) {
         }
     }
 
-    function updateVcrVidTime(time, duration) {
-        var progress;
-
-        progress = Time.format(time) + ' / ' + Time.format(duration);
-
-        this.videoControl.vidTimeEl.html(progress);
+    function updateVcrVidTime(params) {
+        this.videoControl.vidTimeEl.html(Time.format(params.time) + ' / ' + Time.format(params.duration));
     }
 
 });

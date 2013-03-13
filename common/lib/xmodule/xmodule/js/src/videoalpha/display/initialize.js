@@ -27,6 +27,7 @@ function (bind, VideoPlayer) {
         state.setSpeed    = bind(setSpeed, state);
         state.youtubeId   = bind(youtubeId, state);
         state.getDuration = bind(getDuration, state);
+        state.trigger     = bind(trigger, state);
     }
 
     // function renderElements(state)
@@ -113,8 +114,8 @@ function (bind, VideoPlayer) {
             state.hide_captions = true;
 
             $.cookie('hide_captions', state.hide_captions, {
-                expires: 3650,
-                path: '/'
+                'expires': 3650,
+                'path': '/'
             });
 
             state.el.addClass('closed');
@@ -128,48 +129,14 @@ function (bind, VideoPlayer) {
         (function (currentPlayerMode) {
             if ((currentPlayerMode !== 'html5') && (currentPlayerMode !== 'flash')) {
                 $.cookie('current_player_mode', 'html5', {
-                    expires: 3650,
-                    path: '/'
+                    'expires': 3650,
+                    'path': '/'
                 });
                 state.currentPlayerMode = 'html5';
             } else  {
                 state.currentPlayerMode = currentPlayerMode;
             }
         }($.cookie('current_player_mode')));
-
-        // Will be used by various components to register callbacks that can be then called by video core,
-        // or other components.
-        state.callbacks = {
-            'videoPlayer': {
-                'onPlay': [],
-                'onPause': [],
-                'onEnded': [],
-                'onPlaybackQualityChange': [],
-                'updatePlayTime': [],
-                'onSpeedSetChange': []
-            },
-            'videoControl': {
-                'togglePlaybackPlay': [],
-                'togglePlaybackPause': [],
-                'toggleFullScreen': []
-            },
-            'videoQualityControl': {
-                'toggleQuality': []
-            },
-            'videoProgressSlider': {
-                'onSlide': [],
-                'onStop': []
-            },
-            'videoVolumeControl': {
-                'onChange': []
-            },
-            'videoSpeedControl': {
-                'changeVideoSpeed': []
-            },
-            'videoCaption': {
-                'seekPlayer': []
-            }
-        };
 
         // Launch embedding of actual video content, or set it up so that it will be done as soon as the
         // appropriate video player (YouTube or stand alone HTML5) is loaded, and can handle embedding.
@@ -291,8 +258,8 @@ function (bind, VideoPlayer) {
 
         if (updateCookie !== false) {
             $.cookie('video_speed', this.speed, {
-                expires: 3650,
-                path: '/'
+                'expires': 3650,
+                'path': '/'
             });
         }
     }
@@ -306,23 +273,44 @@ function (bind, VideoPlayer) {
     }
 
      /*
-     * Because jQuery events can be triggered on some jQuery object, we must make sure that
-     * we don't trigger an event on an undefined object. For this we will have an in-between
-     * method that will check for the existance of an object before triggering an event on it.
-     *
-     * @objChain is an array that contains the chain of properties on the 'state' object. For
-     * example, if
-     *
-     *     objChain = ['videoPlayer', 'stopVideo'];
-     *
-     * then we will check for the existance of the
-     *
-     *     state.videoPlayer.stopVideo
-     *
-     * object, and, if found to be present, will trigger the specified event on this object.
-     *
-     * @eventName - the name of the event to trigger on the specified object.
-     */
+      * First use: A safe way to trigger jQuery events.
+      * -----------------------------------------------
+      *
+      * Because jQuery events can be triggered on some jQuery object, we must make sure that
+      * we don't trigger an event on an undefined object. For this we will have an in-between
+      * method that will check for the existance of an object before triggering an event on it.
+      *
+      * @objChain is an array that contains the chain of properties on the 'state' object. For
+      * example, if
+      *
+      *     objChain = ['videoPlayer', 'stopVideo'];
+      *
+      * then we will check for the existance of the
+      *
+      *     state.videoPlayer.stopVideo
+      *
+      * object, and, if found to be present, will trigger the specified event on this object.
+      *
+      * @eventName is a string the name of the event to trigger on the specified object.
+      *
+      * @extraParameters is an object or an array that should be passed to the triggered method.
+      *
+      *
+      * Second use: A safe way to call methods.
+      * ---------------------------------------
+      *
+      * If @eventName is 'undefined' or 'null', then trigger() function will assume that the
+      * @objChain is a complete chain with a method (function) at the end. It will call
+      * this function.
+      *
+      * So for example, when trigger() is called like so:
+      *
+      *     state.trigger(['videoPlayer', 'pause'], null, {'param1': 10});
+      *
+      * Then trigger() will execute:
+      *
+      *     state.videoPlayer.pause({'param1': 10});
+      */
     function trigger(objChain, eventName, extraParameters) {
         var tmpObj;
 
@@ -335,7 +323,13 @@ function (bind, VideoPlayer) {
             return false;
         }
 
-        tmpObj.trigger(eventName, extraParameters);
+        if (typeof eventName === 'string') {
+            tmpObj.trigger(eventName, extraParameters);
+        } else if ((typeof eventName === 'undefined') || (eventName === null)) {
+            tmpObj(extraParameters);
+        } else {
+            return false;
+        }
 
         return true;
 
