@@ -81,6 +81,11 @@ class VideoAlphaModule(VideoAlphaFields, XModule):
         self.youtube_streams = xmltree.get('youtube', '')
 
         self.sub = xmltree.get('sub')
+
+        self.autoplay = xmltree.get('autoplay') or ''
+        if self.autoplay.lower() not in ['true', 'false']:
+            self.autoplay = ''
+
         self.position = 0
         self.show_captions = xmltree.get('show_captions', 'true')
         self.sources = {
@@ -156,6 +161,7 @@ class VideoAlphaModule(VideoAlphaFields, XModule):
             'youtube_streams': self.youtube_streams,
             'id': self.location.html_id(),
             'sub': self.sub,
+            'autoplay': self.autoplay,
             'sources': self.sources,
             'track': self.track,
             'display_name': self.display_name_with_default,
