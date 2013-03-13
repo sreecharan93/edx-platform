@@ -170,6 +170,8 @@ function (bind) {
         );
 
         this.videoCaption.rendered = true;
+
+        this.videoCaption.hideCaptions(this.hide_captions);
     }
 
     function scrollCaption() {
