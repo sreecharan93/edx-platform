@@ -37,7 +37,7 @@ function (bind, VideoPlayer) {
     //     way - you don't have to do repeated jQuery element selects.
     function renderElements(state, element) {
         // The parent element of the video, and the ID.
-        state.el = $(element).find('.video');
+        state.el = $(element).find('.videoalpha');
         state.id = state.el.attr('id').replace(/video_/, '');
 
         // We store all settings passed to us by the server in one place. These are "read only", so don't
@@ -137,6 +137,10 @@ function (bind, VideoPlayer) {
                 state.currentPlayerMode = currentPlayerMode;
             }
         }($.cookie('current_player_mode')));
+
+        // Possible value are: 'visible', 'hiding', and 'invisible'.
+        state.controlState = 'visible';
+        state.controlHideTimeout = null;
 
         // Launch embedding of actual video content, or set it up so that it will be done as soon as the
         // appropriate video player (YouTube or stand alone HTML5) is loaded, and can handle embedding.

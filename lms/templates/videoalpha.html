@@ -4,7 +4,7 @@
 
 <div
   id="video_${id}"
-  class="video"
+      class="videoalpha"
   
   % if not settings.MITX_FEATURES['STUB_VIDEO_FOR_TESTING']:
   data-streams="${youtube_streams}"
@@ -30,6 +30,7 @@
     <section class="video-player">
       <div id="${id}"></div>
     </section>
+        <section class="video-roof"></section>
     <section class="video-controls"></section>
   </article>
 </div>
