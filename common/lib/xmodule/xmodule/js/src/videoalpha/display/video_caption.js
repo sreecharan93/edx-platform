@@ -88,6 +88,8 @@ function (bind) {
     }
 
     function fetchCaption(state) {
+        state.videoCaption.hideCaptions(state.hide_captions);
+
         $.getWithPrefix(captionURL(state), function(captions) {
             state.videoCaption.captions = captions.text;
             state.videoCaption.start = captions.start;
@@ -170,8 +172,6 @@ function (bind) {
         );
 
         this.videoCaption.rendered = true;
-
-        this.videoCaption.hideCaptions(this.hide_captions);
     }
 
     function scrollCaption() {
