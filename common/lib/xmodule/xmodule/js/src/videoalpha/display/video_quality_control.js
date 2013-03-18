@@ -92,7 +92,7 @@ function (bind) {
             newQuality = 'hd720';
         }
 
-        this.trigger(['videoPlayer', 'handlePlaybackQualityChange'], null, newQuality);
+        this.trigger(['videoPlayer', 'handlePlaybackQualityChange'], newQuality, 'method');
     }
 
 });

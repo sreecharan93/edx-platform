@@ -214,7 +214,7 @@ function (HTML5Video, bind) {
     }
 
     function onEnded() {
-        this.trigger(['videoControl','pause']);
+        this.trigger(['videoControl','pause'], null, 'method');
     }
 
     function onPause() {
@@ -223,7 +223,7 @@ function (HTML5Video, bind) {
         clearInterval(this.videoPlayer.updateInterval);
         delete this.videoPlayer.updateInterval;
 
-        this.trigger(['videoControl','pause']);
+        this.trigger(['videoControl','pause'], null, 'method');
     }
 
     function onPlay() {
@@ -233,7 +233,7 @@ function (HTML5Video, bind) {
             this.videoPlayer.updateInterval = setInterval(this.videoPlayer.update, 200);
         }
 
-        this.trigger(['videoControl','play']);
+        this.trigger(['videoControl','play'], null, 'method');
     }
 
     function onUnstarted() { }
@@ -247,7 +247,7 @@ function (HTML5Video, bind) {
 
         quality = this.videoPlayer.player.getPlaybackQuality();
 
-        this.trigger(['videoQualityControl', 'onQualityChange'], null, quality);
+        this.trigger(['videoQualityControl', 'onQualityChange'], quality, 'method');
     }
 
     function onReady() {
@@ -274,7 +274,7 @@ function (HTML5Video, bind) {
                     _this.speeds.push(value.toFixed(2).replace(/\.00$/, '.0'));
                 });
 
-                this.trigger(['videoSpeedControl', 'reRender'], null, this.speeds, this.speed);
+                this.trigger(['videoSpeedControl', 'reRender'], {'newSpeeds': this.speeds, 'currentSpeed': this.speed}, 'method');
 
                 this.setSpeed($.cookie('video_speed'));
             }
@@ -311,9 +311,9 @@ function (HTML5Video, bind) {
 
         duration = this.videoPlayer.duration();
 
-        this.trigger(['videoProgressSlider', 'updatePlayTime'], null, {'time': time, 'duration': duration});
-        this.trigger(['videoControl', 'updateVcrVidTime'], null, {'time': time, 'duration': duration});
-        this.trigger(['videoCaption', 'updatePlayTime'], null, time);
+        this.trigger(['videoProgressSlider', 'updatePlayTime'], {'time': time, 'duration': duration}, 'method');
+        this.trigger(['videoControl', 'updateVcrVidTime'], {'time': time, 'duration': duration}, 'method');
+        this.trigger(['videoCaption', 'updatePlayTime'], time, 'method');
     }
 
     function isPlaying() {

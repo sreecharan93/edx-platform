@@ -98,7 +98,7 @@ function (bind) {
         this.videoProgressSlider.frozen = true;
         this.videoProgressSlider.updateTooltip(ui.value);
 
-        this.trigger(['videoPlayer', 'onSeek'], null, ui.value);
+        this.trigger(['videoPlayer', 'onSeek'], ui.value, 'method');
     }
 
     function onChange(event, ui) {
@@ -112,7 +112,7 @@ function (bind) {
 
         this.videoProgressSlider.frozen = true;
 
-        this.trigger(['videoPlayer', 'onSeek'], null, ui.value);
+        this.trigger(['videoPlayer', 'onSeek'], ui.value, 'method');
 
         setTimeout(function() {
             _this.videoProgressSlider.frozen = false;

@@ -113,16 +113,16 @@ function (bind) {
                 parseFloat(this.videoSpeedControl.currentSpeed).toFixed(2).replace(/\.00$/, '.0')
             );
 
-            this.trigger(['videoPlayer', 'onSpeedChange'], null, this.videoSpeedControl.currentSpeed);
+            this.trigger(['videoPlayer', 'onSpeedChange'], this.videoSpeedControl.currentSpeed, 'method');
         }
     }
 
-    function reRender(newSpeeds, currentSpeed) {
+    function reRender(params /*newSpeeds, currentSpeed*/) {
         var _this;
 
         this.videoSpeedControl.videoSpeedsEl.empty();
         this.videoSpeedControl.videoSpeedsEl.find('li').removeClass('active');
-        this.videoSpeedControl.speeds = newSpeeds;
+        this.videoSpeedControl.speeds = params.newSpeeds;
 
         _this = this;
         $.each(this.videoSpeedControl.speeds, function(index, speed) {
@@ -134,7 +134,7 @@ function (bind) {
 
             listItem = $('<li>').attr('data-speed', speed).html(link);
 
-            if (speed === currentSpeed) {
+            if (speed === params.currentSpeed) {
                 listItem.addClass('active');
             }
 

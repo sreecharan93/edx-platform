@@ -250,7 +250,7 @@ function (bind) {
         event.preventDefault();
         time = Math.round(Time.convert($(event.target).data('start'), '1.0', this.speed) / 1000);
 
-        this.trigger(['videoPlayer', 'onSeek'], null, time);
+        this.trigger(['videoPlayer', 'onSeek'], time, 'method');
     }
 
     function calculateOffset(element) {

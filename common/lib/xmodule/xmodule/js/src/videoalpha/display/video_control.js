@@ -119,14 +119,7 @@ function (bind) {
             return;
         }
 
-        console.log('mousemove inside main video el:');
-        console.log('event.pageX = ' + event.pageX + ', event.pageY = ' + event.pageY);
-        console.log('elPosition = ', elPosition);
-        console.log('elWidth = ' + elWidth + ', elHeight = ' + elHeight);
-
         if (this.controlState === 'invisible') {
-            console.log('Controls are invisible - showing.');
-
             this.videoControl.el.show();
             this.controlState = 'visible';
             this.controlHideTimeout = setTimeout(this.videoControl.hideControls, 3000);
@@ -147,7 +140,6 @@ function (bind) {
                 var c1;
                 c1 = 0;
                 _this.el.find('#' + _this.id).children().each(function (index, value) {
-                    console.log(c1);
                     $(value).trigger(event);
                     c1 += 1;
                 });
@@ -168,8 +160,6 @@ function (bind) {
 
     function hideControls() {
         var _this;
-
-        console.log('Controls have been active for a while - hiding.');
 
         this.controlHideTimeout = null;
         this.controlState = 'hiding';
@@ -195,9 +185,9 @@ function (bind) {
         event.preventDefault();
 
         if (this.videoControl.playPauseState === 'playing') {
-            this.trigger(['videoPlayer', 'pause']);
+            this.trigger(['videoPlayer', 'pause'], null, 'method');
         } else { // if (this.videoControl.playPauseState === 'paused') {
-            this.trigger(['videoPlayer', 'play']);
+            this.trigger(['videoPlayer', 'play'], null, 'method');
         }
     }
 
@@ -214,7 +204,7 @@ function (bind) {
             this.videoControl.fullScreenEl.attr('title', 'Exit fill browser');
         }
 
-        this.trigger(['videoCaption', 'resize']);
+        this.trigger(['videoCaption', 'resize'], null, 'method');
     }
 
     function exitFullScreen(event) {

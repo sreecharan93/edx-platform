@@ -276,77 +276,91 @@ function (bind, VideoPlayer) {
         return this.metadata[this.youtubeId()].duration;
     }
 
-     /*
-      * First use: A safe way to trigger jQuery events.
-      * -----------------------------------------------
-      *
-      * Because jQuery events can be triggered on some jQuery object, we must make sure that
-      * we don't trigger an event on an undefined object. For this we will have an in-between
-      * method that will check for the existance of an object before triggering an event on it.
-      *
-      * @objChain is an array that contains the chain of properties on the 'state' object. For
-      * example, if
-      *
-      *     objChain = ['videoPlayer', 'stopVideo'];
-      *
-      * then we will check for the existance of the
-      *
-      *     state.videoPlayer.stopVideo
-      *
-      * object, and, if found to be present, will trigger the specified event on this object.
-      *
-      * @eventName is a string the name of the event to trigger on the specified object.
-      *
-      * @extraParameters is an object or an array that should be passed to the triggered method.
-      *
-      *
-      * Second use: A safe way to call methods.
-      * ---------------------------------------
-      *
-      * If @eventName is 'undefined' or 'null', then trigger() function will assume that the
-      * @objChain is a complete chain with a method (function) at the end. It will call
-      * this function.
-      *
-      * So for example, when trigger() is called like so:
-      *
-      *     state.trigger(['videoPlayer', 'pause'], null, {'param1': 10});
-      *
-      * Then trigger() will execute:
-      *
-      *     state.videoPlayer.pause({'param1': 10});
-      */
-    function trigger(objChain, eventName, extraParameters) {
-        var tmpObj;
+    /* he function .trigger() expects the parameter @callType one of
+     *
+     *     'event'
+     *     'method'
+     *
+     * Based on this parameter, this function can be used in two ways.
+     *
+     *
+     *
+     * First use: A safe way to trigger jQuery events.
+     * -----------------------------------------------
+     *
+     * @callType === 'event'
+     *
+     * Because jQuery events can be triggered on some jQuery object, we must make sure that
+     * we don't trigger an event on an undefined object. For this we will have an in-between
+     * method that will check for the existance of an object before triggering an event on it.
+     *
+     * @objChain is an array that contains the chain of properties on the 'state' object. For
+     * example, if
+     *
+     *     objChain = ['videoPlayer', 'stopVideo'];
+     *
+     * then we will check for the existance of the
+     *
+     *     state.videoPlayer.stopVideo
+     *
+     * object, and, if found to be present, will trigger the specified event on this object.
+     *
+     * @eventName is a string the name of the event to trigger on the specified object.
+     *
+     * @extraParameters is an object or an array that should be passed to the triggered method.
+     *
+     *
+     * Second use: A safe way to call methods.
+     * ---------------------------------------
+     *
+     * @callType === 'method'
+     *
+     * Parameter @eventName is NOT necessary.
+     *
+     * The trigger() function will assume that the @objChain is a complete chain with a method
+     * (function) at the end. It will call this function. So for example, when trigger() is
+     * called like so:
+     *
+     *     state.trigger(['videoPlayer', 'pause'], {'param1': 10}, 'method');
+     *
+     * Then trigger() will execute:
+     *
+     *     state.videoPlayer.pause({'param1': 10});
+     */
+    function trigger(objChain, extraParameters, callType, eventName) {
+        var i, tmpObj;
 
         // Remember that 'this' is the 'state' object.
         tmpObj = this;
 
-        getFinalObj(0);
+        // At the end of the loop the variable 'tmpObj' will either be the correct
+        // object/function to trigger/invoke. If the 'objChain' chain of object is
+        // incorrect (one of the link is non-existent), then 'tmpObj' will be set to
+        // 'null', and the loop will immediately exit.
+        for (i = 0; i < objChain.length; i += 1) {
+            if (tmpObj.hasOwnProperty(objChain[i]) === true) {
+                tmpObj = tmpObj[objChain[i]];
+            } else {
+                tmpObj = null;
+                break;
+            }
+        }
 
+        // An incorrect object chain was specified.
         if (tmpObj === null) {
             return false;
         }
 
-        if (typeof eventName === 'string') {
+        // Based on the type, either trigger, or invoke.
+        if (callType === 'event') {
             tmpObj.trigger(eventName, extraParameters);
-        } else if ((typeof eventName === 'undefined') || (eventName === null)) {
+        } else if (callType === 'method') {
             tmpObj(extraParameters);
         } else {
             return false;
         }
 
         return true;
-
-        function getFinalObj(i) {
-            if (objChain.length !== i) {
-                if (tmpObj.hasOwnProperty(objChain[i]) === true) {
-                    tmpObj = tmpObj[objChain[i]];
-                    getFinalObj(i + 1);
-                } else {
-                    tmpObj = null;
-                }
-            }
-        }
     }
 });
 
