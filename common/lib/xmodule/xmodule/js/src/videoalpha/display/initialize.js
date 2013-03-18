@@ -335,20 +335,18 @@ function (bind, VideoPlayer) {
 
         // At the end of the loop the variable 'tmpObj' will either be the correct
         // object/function to trigger/invoke. If the 'objChain' chain of object is
-        // incorrect (one of the link is non-existent), then 'tmpObj' will be set to
-        // 'null', and the loop will immediately exit.
-        for (i = 0; i < objChain.length; i += 1) {
-            if (tmpObj.hasOwnProperty(objChain[i]) === true) {
-                tmpObj = tmpObj[objChain[i]];
-            } else {
-                tmpObj = null;
-                break;
-            }
-        }
+        // incorrect (one of the link is non-existent), then the loop will immediately
+        // exit.
+        while (objChain.length > 0) {
+            i = objChain.shift();
 
-        // An incorrect object chain was specified.
-        if (tmpObj === null) {
-            return false;
+            if (tmpObj.hasOwnProperty(i) === true) {
+                tmpObj = tmpObj[i];
+            } else {
+                // An incorrect object chain was specified.
+
+                return false;
+            }
         }
 
         // Based on the type, either trigger, or invoke.
