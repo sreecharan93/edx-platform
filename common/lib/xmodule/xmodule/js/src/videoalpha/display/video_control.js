@@ -82,8 +82,12 @@ function (bind) {
             state.videoControl.play();
         }
 
-        state.controlHideTimeout = setTimeout(state.videoControl.hideControls, 3000);
-        state.el.find('.video-roof').on('mousemove', state.videoControl.showControls);
+        if (state.videoType === 'html5') {
+            state.videoControl.fadeOutTimeout = 2000;
+
+            state.videoControl.el.addClass('html5');
+            state.controlHideTimeout = setTimeout(state.videoControl.hideControls, state.videoControl.fadeOutTimeout);
+        }
     }
 
     // function bindHandlers(state)
@@ -93,6 +97,10 @@ function (bind) {
         state.videoControl.playPauseEl.on('click', state.videoControl.togglePlayback);
         state.videoControl.fullScreenEl.on('click', state.videoControl.toggleFullScreen);
         $(document).on('keyup', state.videoControl.exitFullScreen);
+
+        if (state.videoType === 'html5') {
+            state.el.on('mousemove', state.videoControl.showControls)
+        }
     }
 
     // ***************************************************************
@@ -102,59 +110,25 @@ function (bind) {
     // ***************************************************************
 
     function showControls(event) {
-        var elPosition, elWidth, elHeight;
+        if (this.controlShowLock !== true) {
+            this.controlShowLock = true;
 
-        normalize(event);
-
-        elPosition = this.el.position();
-        elWidth = this.el.width();
-        elHeight = this.el.height();
-
-        if (
-            (event.pageX < elPosition.left) ||
-            (event.pageX > elPosition.left + elWidth) ||
-            (event.pageY < elPosition.top) ||
-            (event.pageY > elPosition.top + elHeight)
-        ) {
-            return;
-        }
-
-        if (this.controlState === 'invisible') {
-            this.videoControl.el.show();
-            this.controlState = 'visible';
-            this.controlHideTimeout = setTimeout(this.videoControl.hideControls, 3000);
-        }/* else if (this.controlState === 'hiding') {
-            this.videoControl.el.stop(true, false);
-            this.videoControl.el.show();
-            this.controlState = 'visible';
-            this.controlHideTimeout = setTimeout(this.videoControl.hideControls, 3000);
-        }*/ else if (this.controlState === 'visible') {
-            clearTimeout(this.controlHideTimeout);
-            this.controlHideTimeout = setTimeout(this.videoControl.hideControls, 3000);
-        }
-
-        this.controlShowLock = false;
-
-        if (this.videoPlayer && this.videoPlayer.player) {
-            (function (event, _this) {
-                var c1;
-                c1 = 0;
-                _this.el.find('#' + _this.id).children().each(function (index, value) {
-                    $(value).trigger(event);
-                    c1 += 1;
-                });
-            }(event, this));
-        }
-
-        return;
-
-        function normalize(event) {
-            if(!event.offsetX) {
-                event.offsetX = (event.pageX - $(event.target).offset().left);
-                event.offsetY = (event.pageY - $(event.target).offset().top);
+            if (this.controlState === 'invisible') {
+                this.videoControl.el.show();
+                this.controlState = 'visible';
+                this.controlHideTimeout = setTimeout(this.videoControl.hideControls, this.videoControl.fadeOutTimeout);
+            } else if (this.controlState === 'hiding') {
+                this.videoControl.el.stop(true, false);
+                this.videoControl.el.css('opacity', 1);
+                this.videoControl.el.show();
+                this.controlState = 'visible';
+                this.controlHideTimeout = setTimeout(this.videoControl.hideControls, this.videoControl.fadeOutTimeout);
+            } else if (this.controlState === 'visible') {
+                clearTimeout(this.controlHideTimeout);
+                this.controlHideTimeout = setTimeout(this.videoControl.hideControls, this.videoControl.fadeOutTimeout);
             }
 
-            return event;
+            this.controlShowLock = false;
         }
     }
 

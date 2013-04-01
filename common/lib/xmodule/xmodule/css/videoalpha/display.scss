@@ -31,15 +31,6 @@ div.videoalpha {
       }
     }
 
-    section.video-roof {
-        background-color: green;
-        z-index: 10000;
-        width: 540px;
-        height: 100px;
-        position: absolute;
-        top: 387px;
-    }
-
     section.video-controls {
       @include clearfix();
       background: #333;
@@ -423,6 +414,11 @@ div.videoalpha {
           }
         }
       }
+    }
+
+    section.video-controls.html5 {
+      margin-bottom: -56px;
+      bottom: 56px;
     }
 
     &:hover section.video-controls {
