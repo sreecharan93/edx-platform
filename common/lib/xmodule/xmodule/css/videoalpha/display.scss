@@ -15,11 +15,26 @@ div.videoalpha {
     margin-right: flex-gutter(9);
     width: flex-grid(6, 9);
 
+    div.video-player-pre {
+        height: 50px;
+        background-color: black;
+    }
+
+    div.video-player-post {
+        height: 105px;
+        background-color: black;
+    }
+
     section.video-player {
       height: 0;
       overflow: hidden;
       padding-bottom: 56.25%;
       position: relative;
+
+      /*
+      margin-top: 45px;
+      margin-bottom: 110px;
+      */
 
       object, iframe {
         border: none;
@@ -479,6 +494,17 @@ div.videoalpha {
 
     article.video-wrapper {
       width: flex-grid(9,9);
+    }
+
+    /*
+    article.video-wrapper section.video-player {
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
+    */
+
+    article.video-wrapper div.video-player-pre, article.video-wrapper div.video-player-post {
+        height: 0px;
     }
 
     ol.subtitles {

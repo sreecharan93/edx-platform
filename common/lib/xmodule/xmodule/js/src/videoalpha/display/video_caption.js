@@ -281,9 +281,11 @@ function (bind) {
 
     function hideCaptions(hide_captions) {
         if (hide_captions) {
+            this.captionsHidden = true;
             this.videoCaption.hideSubtitlesEl.attr('title', 'Turn on captions');
             this.el.addClass('closed');
         } else {
+            this.captionsHidden = false;
             this.videoCaption.hideSubtitlesEl.attr('title', 'Turn off captions');
             this.el.removeClass('closed');
             this.videoCaption.scrollCaption();

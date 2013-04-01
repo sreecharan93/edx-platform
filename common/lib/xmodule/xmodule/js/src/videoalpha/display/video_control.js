@@ -111,7 +111,20 @@ function (bind) {
 
     function showControls(event) {
         if (this.controlShowLock !== true) {
+            if (this.captionsHidden !== true) {
+                return;
+            }
+
             this.controlShowLock = true;
+
+            // We must also show the caption. The following styleing should be applied to get an
+            // overlay effect:
+            //
+            //     position: absolute;
+            //     margin-left: 590px;
+            //     margin-top: 7px;
+            //     width: 223px;   // <-- This should be 261px, but then the margin-left must also be updated!
+            //     height: 390px;
 
             if (this.controlState === 'invisible') {
                 this.videoControl.el.show();
@@ -136,6 +149,11 @@ function (bind) {
         var _this;
 
         this.controlHideTimeout = null;
+
+        if (this.captionsHidden !== true) {
+            return;
+        }
+
         this.controlState = 'hiding';
 
         _this = this;
