@@ -141,6 +141,8 @@ function (bind, VideoPlayer) {
         // Possible value are: 'visible', 'hiding', and 'invisible'.
         state.controlState = 'visible';
         state.controlHideTimeout = null;
+        state.captionState = 'visible';
+        state.captionHideTimeout = null;
 
         // Launch embedding of actual video content, or set it up so that it will be done as soon as the
         // appropriate video player (YouTube or stand alone HTML5) is loaded, and can handle embedding.
