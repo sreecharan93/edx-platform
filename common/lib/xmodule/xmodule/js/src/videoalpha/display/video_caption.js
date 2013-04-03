@@ -24,6 +24,8 @@ function (bind) {
     //     Functions which will be accessible via 'state' object. When called, these functions will
     //     get the 'state' object as a context.
     function makeFunctionsPublic(state) {
+        state.videoCaption.autoShowCaptions    = bind(autoShowCaptions, state);
+        state.videoCaption.autoHideCaptions    = bind(autoHideCaptions, state);
         state.videoCaption.resize              = bind(resize, state);
         state.videoCaption.toggle              = bind(toggle, state);
         state.videoCaption.onMouseEnter        = bind(onMouseEnter, state);
@@ -64,6 +66,13 @@ function (bind) {
         });
 
         fetchCaption(state);
+
+        if (state.videoType === 'html5') {
+            state.videoCaption.fadeOutTimeout = 1400;
+
+            // state.videoCaption.subtitlesEl.addClass('html5');
+            state.captionHideTimeout = setTimeout(state.videoCaption.autoHideCaptions, state.videoCaption.fadeOutTimeout);
+        }
     }
 
     // function bindHandlers(state)
@@ -85,6 +94,10 @@ function (bind) {
             'DOMMouseScroll',
             state.videoCaption.onMovement
         );
+
+        if (state.videoType === 'html5') {
+            state.el.on('mousemove', state.videoCaption.autoShowCaptions)
+        }
     }
 
     function fetchCaption(state) {
@@ -118,6 +131,51 @@ function (bind) {
     // These are available via the 'state' object. Their context ('this' keyword) is the 'state' object.
     // The magic private function that makes them available and sets up their context is makeFunctionsPublic().
     // ***************************************************************
+
+    function autoShowCaptions(event) {
+        if (this.captionsShowLock !== true) {
+            if (this.captionsHidden !== true) {
+                return;
+            }
+
+            this.captionsShowLock = true;
+
+            if (this.captionState === 'invisible') {
+                this.videoCaption.subtitlesEl.show();
+                this.captionState = 'visible';
+                this.captionHideTimeout = setTimeout(this.videoCaption.autoHideCaptions, this.videoCaption.fadeOutTimeout);
+            } else if (this.captionState === 'hiding') {
+                this.videoCaption.subtitlesEl.stop(true, false);
+                this.videoCaption.subtitlesEl.css('opacity', 1);
+                this.videoCaption.subtitlesEl.show();
+                this.captionState = 'visible';
+                this.captionHideTimeout = setTimeout(this.videoCaption.autoHideCaptions, this.videoCaption.fadeOutTimeout);
+            } else if (this.captionState === 'visible') {
+                clearTimeout(this.captionHideTimeout);
+                this.captionHideTimeout = setTimeout(this.videoCaption.autoHideCaptions, this.videoCaption.fadeOutTimeout);
+            }
+
+            this.captionsShowLock = false;
+        }
+    }
+
+    function autoHideCaptions() {
+        var _this;
+
+        this.captionHideTimeout = null;
+
+        if (this.captionsHidden !== true) {
+            return;
+        }
+
+        this.captionState = 'hiding';
+
+        _this = this;
+
+        this.videoCaption.subtitlesEl.fadeOut(1000, function () {
+            _this.captionState = 'invisible';
+        });
+    }
 
     function resize() {
         this.videoCaption.subtitlesEl.css({

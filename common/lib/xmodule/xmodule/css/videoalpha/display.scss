@@ -10,10 +10,16 @@ div.videoalpha {
   padding: 12px;
   border-radius: 5px;
 
+  div.tc-wrapper {
+    position: relative;
+  }
+
   article.video-wrapper {
     float: left;
     margin-right: flex-gutter(9);
     width: flex-grid(6, 9);
+
+    position: relative;
 
     div.video-player-pre {
         height: 50px;
@@ -21,7 +27,7 @@ div.videoalpha {
     }
 
     div.video-player-post {
-        height: 105px;
+        height: 50px;
         background-color: black;
     }
 
@@ -404,7 +410,7 @@ div.videoalpha {
 
         a.hide-subtitles {
           background: url('../images/cc.png') center no-repeat;
-          color: #797979;
+          /* color: #797979; */
           display: block;
           float: left;
           font-weight: 800;
@@ -427,13 +433,17 @@ div.videoalpha {
           &.off {
             opacity: 0.7;
           }
+
+          background-color: #444;
+          color: #fff;
+          text-decoration: none;
         }
       }
     }
 
     section.video-controls.html5 {
-      margin-bottom: -56px;
-      bottom: 56px;
+      /* margin-bottom: -56px;
+      bottom: 56px; */
     }
 
     &:hover section.video-controls {
@@ -503,13 +513,34 @@ div.videoalpha {
     }
     */
 
+    article.video-wrapper section.video-controls.html5 {
+      /*
+      margin-bottom: -56px;
+      bottom: 56px;
+      */
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+      position: absolute;
+    }
+
+    article.video-wrapper section.video-controls div.secondary-controls a.hide-subtitles {
+        background-color: inherit;
+        color: #797979;
+        text-decoration: inherit;
+    }
+
     article.video-wrapper div.video-player-pre, article.video-wrapper div.video-player-post {
         height: 0px;
     }
 
     ol.subtitles {
-      width: 0;
-      height: 0;
+        background-color: rgba(243, 243, 243, 0.5);
+        height: 380px;
+        position: absolute;
+        right: 0;
+        width: 275px;
+        margin-top: 20px;
     }
   }
 
@@ -570,7 +601,7 @@ div.videoalpha {
       background: rgba(#000, .8);
       bottom: 0;
       height: 100%;
-      max-height: 100%;
+      max-height: 460px; /* 100%; */
       max-width: flex-grid(3);
       padding: lh();
       position: fixed;

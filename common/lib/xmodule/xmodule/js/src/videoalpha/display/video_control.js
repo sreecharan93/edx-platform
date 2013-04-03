@@ -83,7 +83,7 @@ function (bind) {
         }
 
         if (state.videoType === 'html5') {
-            state.videoControl.fadeOutTimeout = 2000;
+            state.videoControl.fadeOutTimeout = 1400;
 
             state.videoControl.el.addClass('html5');
             state.controlHideTimeout = setTimeout(state.videoControl.hideControls, state.videoControl.fadeOutTimeout);
@@ -116,15 +116,6 @@ function (bind) {
             }
 
             this.controlShowLock = true;
-
-            // We must also show the caption. The following styleing should be applied to get an
-            // overlay effect:
-            //
-            //     position: absolute;
-            //     margin-left: 590px;
-            //     margin-top: 7px;
-            //     width: 223px;   // <-- This should be 261px, but then the margin-left must also be updated!
-            //     height: 390px;
 
             if (this.controlState === 'invisible') {
                 this.videoControl.el.show();
