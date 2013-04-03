@@ -119,10 +119,6 @@ function (bind) {
     }
 
     function captionURL(state) {
-        console.log('We are inside captionURL() function.');
-        console.log('state.config.caption_asset_path = "' + state.config.caption_asset_path + '".');
-        console.log('state.youtubeId("1.0") = "' + state.youtubeId('1.0') + '".');
-
         return '' + state.config.caption_asset_path + state.youtubeId('1.0') + '.srt.sjson';
     }
 

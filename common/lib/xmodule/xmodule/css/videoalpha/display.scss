@@ -37,11 +37,6 @@ div.videoalpha {
       padding-bottom: 56.25%;
       position: relative;
 
-      /*
-      margin-top: 45px;
-      margin-bottom: 110px;
-      */
-
       object, iframe {
         border: none;
         height: 100%;
@@ -410,7 +405,6 @@ div.videoalpha {
 
         a.hide-subtitles {
           background: url('../images/cc.png') center no-repeat;
-          /* color: #797979; */
           display: block;
           float: left;
           font-weight: 800;
@@ -439,11 +433,6 @@ div.videoalpha {
           text-decoration: none;
         }
       }
-    }
-
-    section.video-controls.html5 {
-      /* margin-bottom: -56px;
-      bottom: 56px; */
     }
 
     &:hover section.video-controls {
@@ -506,18 +495,7 @@ div.videoalpha {
       width: flex-grid(9,9);
     }
 
-    /*
-    article.video-wrapper section.video-player {
-      margin-top: 0px;
-      margin-bottom: 0px;
-    }
-    */
-
     article.video-wrapper section.video-controls.html5 {
-      /*
-      margin-bottom: -56px;
-      bottom: 56px;
-      */
       bottom: 0px;
       left: 0px;
       right: 0px;
@@ -601,7 +579,7 @@ div.videoalpha {
       background: rgba(#000, .8);
       bottom: 0;
       height: 100%;
-      max-height: 460px; /* 100%; */
+      max-height: 460px;
       max-width: flex-grid(3);
       padding: lh();
       position: fixed;
