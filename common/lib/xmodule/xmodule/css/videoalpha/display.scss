@@ -19,6 +19,8 @@ div.videoalpha {
     margin-right: flex-gutter(9);
     width: flex-grid(6, 9);
 
+    background-color: black;
+
     position: relative;
 
     div.video-player-pre {
@@ -493,6 +495,8 @@ div.videoalpha {
 
     article.video-wrapper {
       width: flex-grid(9,9);
+
+      background-color: inherit;
     }
 
     article.video-wrapper section.video-controls.html5 {
@@ -512,7 +516,7 @@ div.videoalpha {
         height: 0px;
     }
 
-    ol.subtitles {
+    ol.subtitles.html5 {
         background-color: rgba(243, 243, 243, 0.5);
         height: 380px;
         position: absolute;

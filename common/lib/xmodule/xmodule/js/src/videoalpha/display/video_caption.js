@@ -70,7 +70,7 @@ function (bind) {
         if (state.videoType === 'html5') {
             state.videoCaption.fadeOutTimeout = 1400;
 
-            // state.videoCaption.subtitlesEl.addClass('html5');
+            state.videoCaption.subtitlesEl.addClass('html5');
             state.captionHideTimeout = setTimeout(state.videoCaption.autoHideCaptions, state.videoCaption.fadeOutTimeout);
         }
     }
