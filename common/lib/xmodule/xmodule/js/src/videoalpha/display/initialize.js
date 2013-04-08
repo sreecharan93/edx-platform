@@ -50,8 +50,9 @@ function (bind, VideoPlayer) {
 
             'caption_data_dir':   state.el.data('caption-data-dir'),
             'caption_asset_path': state.el.data('caption-asset-path'),
+ // refactor
             'show_captions':      (state.el.data('show-captions').toString() === 'true'),
-
+// 
             'youtubeStreams':     state.el.data('streams'),
 
             'sub':                state.el.data('sub'),
@@ -165,6 +166,10 @@ function (bind, VideoPlayer) {
                     embed(state);
                 };
             }
+        
+//REFACTOR
+// USE ? : construction( inline if )
+// window[obj] = embed.bind(window, state) 
         }
     }
 
@@ -178,13 +183,16 @@ function (bind, VideoPlayer) {
     //     @return
     //         false: We don't have YouTube video IDs to work with; most likely we have HTML5 video sources.
     //         true: Parsing of YouTube video IDs went OK, and we can proceed onwards to play YouTube videos.
+ 
+
     function parseYoutubeStreams(state, youtubeStreams) {
         if ((typeof youtubeStreams !== 'string') || (youtubeStreams.length === 0)) {
             return false;
         }
 
         state.videos = {};
-
+// REFACTOR: use underscore map and underscore list  comprehension
+ 
         $.each(youtubeStreams.split(/,/), function(index, video) {
             var speed;
 
@@ -214,6 +222,7 @@ function (bind, VideoPlayer) {
             state.html5Sources.ogg = oggSource;
         }
     }
+    // REFACTOR try list comprehension and map
 
     // function fetchMetadata(state)
     //
@@ -329,6 +338,8 @@ function (bind, VideoPlayer) {
      *
      *     state.videoPlayer.pause({'param1': 10});
      */
+
+     // refactor : default values
     function trigger(objChain, extraParameters, callType, eventName) {
         var i, tmpObj;
 
@@ -365,3 +376,7 @@ function (bind, VideoPlayer) {
 });
 
 }(RequireJS.requirejs, RequireJS.require, RequireJS.define));
+
+
+// REFACTOR: remove uneccesary type checkings
+// remove EMBED
