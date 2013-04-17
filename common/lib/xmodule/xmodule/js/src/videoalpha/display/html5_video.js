@@ -11,7 +11,7 @@ function () {
 
     HTML5Video.Player = (function () {
         Player.prototype.callStateChangeCallback = function () {
-            if ($.isFunction(this.config.events.onStateChange) === true) {
+            if ($.isFunction(this.config.events.onStateChange)) {
                 this.config.events.onStateChange({
                     'data': this.playerState
                 });
@@ -62,7 +62,7 @@ function () {
 
             newSpeed = parseFloat(value);
 
-            if (isFinite(newSpeed) === true) {
+            if (isFinite(newSpeed)) {
                 this.video.playbackRate = value;
             }
         };
@@ -130,14 +130,14 @@ function () {
             }
 
             // A simple test to see that the 'config' is a normal object.
-            if ($.isPlainObject(config) === true) {
+            if ($.isPlainObject(config)) {
                 this.config = config;
             } else {
                 return;
             }
 
             // We should have at least one video source. Otherwise there is no point to continue.
-            if (config.hasOwnProperty('videoSources') === false) {
+            if (!config.videoSources) {
                 return;
             }
 
@@ -154,9 +154,8 @@ function () {
             // Create HTML markup for individual sources of the HTML5 <video> element.
             $.each(sourceStr, function (videoType, videoSource) {
                 if (
-                    (_this.config.videoSources.hasOwnProperty(videoType) === true) &&
-                    (typeof _this.config.videoSources[videoType] === 'string') &&
-                    (_this.config.videoSources[videoType].length > 0)
+                    (_this.config.videoSources[videoType]) &&
+                    (_this.config.videoSources[videoType].length)
                 ) {
                     sourceStr[videoType] =
                         '<source ' +
@@ -174,14 +173,14 @@ function () {
             // Determine the starting and ending time for the video.
             this.start = 0;
             this.end = null;
-            if (config.hasOwnProperty('playerVars') === true) {
+            if (config.playerVars) {
                 this.start = parseFloat(config.playerVars.start);
-                if ((isFinite(this.start) !== true) || (this.start < 0)) {
+                if ((!isFinite(this.start)) || (this.start < 0)) {
                     this.start = 0;
                 }
 
                 this.end = parseFloat(config.playerVars.end);
-                if ((isFinite(this.end) !== true) || (this.end < this.start)) {
+                if ((!isFinite(this.end)) || (this.end < this.start)) {
                     this.end = null;
                 }
             }
@@ -242,7 +241,7 @@ function () {
                 }
                 _this.video.currentTime = _this.start;
 
-                if ($.isFunction(_this.config.events.onReady) === true) {
+                if ($.isFunction(_this.config.events.onReady)) {
                     _this.config.events.onReady(null);
                 }
             }, false);

@@ -3,8 +3,8 @@
 // VideoControl module.
 define(
 'videoalpha/display/video_control.js',
-['videoalpha/display/bind.js'],
-function (bind) {
+[],
+function () {
 
     // VideoControl() function - what this module "exports".
     return function (state) {
@@ -24,14 +24,14 @@ function (bind) {
     //     Functions which will be accessible via 'state' object. When called, these functions will
     //     get the 'state' object as a context.
     function makeFunctionsPublic(state) {
-        state.videoControl.showControls     = bind(showControls, state);
-        state.videoControl.hideControls     = bind(hideControls, state);
-        state.videoControl.play             = bind(play, state);
-        state.videoControl.pause            = bind(pause, state);
-        state.videoControl.togglePlayback   = bind(togglePlayback, state);
-        state.videoControl.toggleFullScreen = bind(toggleFullScreen, state);
-        state.videoControl.exitFullScreen   = bind(exitFullScreen, state);
-        state.videoControl.updateVcrVidTime = bind(updateVcrVidTime, state);
+        state.videoControl.showControls     = showControls.bind(state);
+        state.videoControl.hideControls     = hideControls.bind(state);
+        state.videoControl.play             = play.bind(state);
+        state.videoControl.pause            = pause.bind(state);
+        state.videoControl.togglePlayback   = togglePlayback.bind(state);
+        state.videoControl.toggleFullScreen = toggleFullScreen.bind(state);
+        state.videoControl.exitFullScreen   = exitFullScreen.bind(state);
+        state.videoControl.updateVcrVidTime = updateVcrVidTime.bind(state);
     }
 
     // function renderElements(state)
@@ -110,8 +110,8 @@ function (bind) {
     // ***************************************************************
     // REFACTOR document
     function showControls(event) {
-        if (this.controlShowLock !== true) {
-            if (this.captionsHidden !== true) {
+        if (!this.controlShowLock) {
+            if (!this.captionsHidden) {
                 return;
             }
 
@@ -142,7 +142,7 @@ function (bind) {
 
         this.controlHideTimeout = null;
 
-        if (this.captionsHidden !== true) {
+        if (!this.captionsHidden) {
             return;
         }
 
@@ -169,16 +169,16 @@ function (bind) {
         event.preventDefault();
 
         if (this.videoControl.playPauseState === 'playing') {
-            this.trigger(['videoPlayer', 'pause'], null, 'method');
+            this.trigger(['videoPlayer', 'pause'], null);
         } else { // if (this.videoControl.playPauseState === 'paused') {
-            this.trigger(['videoPlayer', 'play'], null, 'method');
+            this.trigger(['videoPlayer', 'play'], null);
         }
     }
 
     function toggleFullScreen(event) {
         event.preventDefault();
 
-        if (this.videoControl.fullScreenState === true) {
+        if (this.videoControl.fullScreenState) {
             this.videoControl.fullScreenState = false;
             this.el.removeClass('fullscreen');
             this.videoControl.fullScreenEl.attr('title', 'Fill browser');
@@ -188,11 +188,11 @@ function (bind) {
             this.videoControl.fullScreenEl.attr('title', 'Exit fill browser');
         }
 
-        this.trigger(['videoCaption', 'resize'], null, 'method');
+        this.trigger(['videoCaption', 'resize'], null);
     }
 
     function exitFullScreen(event) {
-        if ((this.el.hasClass('fullscreen') === true) && (event.keyCode === 27)) {
+        if ((this.el.hasClass('fullscreen')) && (event.keyCode === 27)) {
             this.videoControl.toggleFullScreen(event);
         }
     }

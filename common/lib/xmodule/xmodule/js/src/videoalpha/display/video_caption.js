@@ -3,8 +3,8 @@
 // VideoCaption module.
 define(
 'videoalpha/display/video_caption.js',
-['videoalpha/display/bind.js'],
-function (bind) {
+[],
+function () {
 
     // VideoCaption() function - what this module "exports".
     return function (state) {
@@ -24,25 +24,25 @@ function (bind) {
     //     Functions which will be accessible via 'state' object. When called, these functions will
     //     get the 'state' object as a context.
     function makeFunctionsPublic(state) {
-        state.videoCaption.autoShowCaptions    = bind(autoShowCaptions, state);
-        state.videoCaption.autoHideCaptions    = bind(autoHideCaptions, state);
-        state.videoCaption.resize              = bind(resize, state);
-        state.videoCaption.toggle              = bind(toggle, state);
-        state.videoCaption.onMouseEnter        = bind(onMouseEnter, state);
-        state.videoCaption.onMouseLeave        = bind(onMouseLeave, state);
-        state.videoCaption.onMovement          = bind(onMovement, state);
-        state.videoCaption.renderCaption       = bind(renderCaption, state);
-        state.videoCaption.captionHeight       = bind(captionHeight, state);
-        state.videoCaption.topSpacingHeight    = bind(topSpacingHeight, state);
-        state.videoCaption.bottomSpacingHeight = bind(bottomSpacingHeight, state);
-        state.videoCaption.scrollCaption       = bind(scrollCaption, state);
-        state.videoCaption.search              = bind(search, state);
-        state.videoCaption.play                = bind(play, state);
-        state.videoCaption.pause               = bind(pause, state);
-        state.videoCaption.seekPlayer          = bind(seekPlayer, state);
-        state.videoCaption.hideCaptions        = bind(hideCaptions, state);
-        state.videoCaption.calculateOffset     = bind(calculateOffset, state);
-        state.videoCaption.updatePlayTime      = bind(updatePlayTime, state);
+        state.videoCaption.autoShowCaptions    = autoShowCaptions.bind(state);
+        state.videoCaption.autoHideCaptions    = autoHideCaptions.bind(state);
+        state.videoCaption.resize              = resize.bind(state);
+        state.videoCaption.toggle              = toggle.bind(state);
+        state.videoCaption.onMouseEnter        = onMouseEnter.bind(state);
+        state.videoCaption.onMouseLeave        = onMouseLeave.bind(state);
+        state.videoCaption.onMovement          = onMovement.bind(state);
+        state.videoCaption.renderCaption       = renderCaption.bind(state);
+        state.videoCaption.captionHeight       = captionHeight.bind(state);
+        state.videoCaption.topSpacingHeight    = topSpacingHeight.bind(state);
+        state.videoCaption.bottomSpacingHeight = bottomSpacingHeight.bind(state);
+        state.videoCaption.scrollCaption       = scrollCaption.bind(state);
+        state.videoCaption.search              = search.bind(state);
+        state.videoCaption.play                = play.bind(state);
+        state.videoCaption.pause               = pause.bind(state);
+        state.videoCaption.seekPlayer          = seekPlayer.bind(state);
+        state.videoCaption.hideCaptions        = hideCaptions.bind(state);
+        state.videoCaption.calculateOffset     = calculateOffset.bind(state);
+        state.videoCaption.updatePlayTime      = updatePlayTime.bind(state);
     }
 
     // function renderElements(state)
@@ -129,8 +129,8 @@ function (bind) {
     // ***************************************************************
 
     function autoShowCaptions(event) {
-        if (this.captionsShowLock !== true) {
-            if (this.captionsHidden !== true) {
+        if (!this.captionsShowLock) {
+            if (!this.captionsHidden) {
                 return;
             }
 
@@ -160,7 +160,7 @@ function (bind) {
 
         this.captionHideTimeout = null;
 
-        if (this.captionsHidden !== true) {
+        if (!this.captionsHidden) {
             return;
         }
 
@@ -308,7 +308,7 @@ function (bind) {
         event.preventDefault();
         time = Math.round(Time.convert($(event.target).data('start'), '1.0', this.speed) / 1000);
 
-        this.trigger(['videoPlayer', 'onSeek'], time, 'method');
+        this.trigger(['videoPlayer', 'onSeek'], time);
     }
 
     function calculateOffset(element) {
