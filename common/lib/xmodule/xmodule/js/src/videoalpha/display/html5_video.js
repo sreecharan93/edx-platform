@@ -1,6 +1,18 @@
+/**
+ * @file HTML5 video player module. Provides methods to control the in-browser HTML5 video player.
+ *
+ * The goal was to write this module so that it closely resembles the YouTube API. The main reason
+ * for this is because initially the edX video player supported only YouTube videos. When HTML5
+ * support was added, for greater compatibility, and to reduce the amount of code that needed to
+ * be modified, it was decided to write a similar API as the one provided by YouTube.
+ *
+ * @external RequireJS
+ *
+ * @module HTML5Video
+ */
+
 (function (requirejs, require, define) {
 
-// HTML5Video module.
 define(
 'videoalpha/display/html5_video.js',
 [],
@@ -76,10 +88,10 @@ function () {
         /*
          * Constructor function for HTML5 Video player.
          *
-         * @el - A DOM element where the HTML5 player will be inserted (as returned by jQuery(selector) function),
+         * @param {String|Object} el A DOM element where the HTML5 player will be inserted (as returned by jQuery(selector) function),
          * or a selector string which will be used to select an element. This is a required parameter.
          *
-         * @config - An object whose properties will be used as configuration options for the HTML5 video
+         * @param config - An object whose properties will be used as configuration options for the HTML5 video
          * player. This is an optional parameter. In the case if this parameter is missing, or some of the config
          * object's properties are missing, defaults will be used. The available options (and their defaults) are as
          * follows:

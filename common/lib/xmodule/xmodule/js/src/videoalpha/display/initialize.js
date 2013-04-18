@@ -1,12 +1,29 @@
+/**
+ * @file Initialize module works with the JSON config, and sets up various settings, parameters,
+ * variables. After all setup actions are performed, it invokes the video player to play the
+ * specified video. This module must be invoked first. It provides several functions which do not
+ * fit in with other modules.
+ *
+ * @external VideoPlayer
+ *
+ * @module Initialize
+ */
+
 (function (requirejs, require, define) {
 
-// Initialize module.
 define(
 'videoalpha/display/initialize.js',
 ['videoalpha/display/video_player.js'],
 function (VideoPlayer) {
 
-    // Initialize() function - what this module "exports".
+    /**
+     * @function
+     *
+     * Initialize module exports this function.
+     *
+     * @param {Object} state A place for all properties, and methods of Video Alpha.
+     * @param {DOM element} element Container of the entire Video Alpha DOM element.
+     */
     return function (state, element) {
         checkForNativeFunctions();
         makeFunctionsPublic(state);
@@ -17,10 +34,14 @@ function (VideoPlayer) {
     // Private functions start here.
     // ***************************************************************
 
-    // function makeFunctionsPublic(state)
-    //
-    //     Functions which will be accessible via 'state' object. When called, these functions will
-    //     get the 'state' object as a context.
+    /**
+     * @function makeFunctionsPublic
+     *
+     * Functions which will be accessible via 'state' object. When called, these functions will get the 'state'
+     * object as a context.
+     *
+     * @param {Object} state A place for all properties, and methods of Video Alpha.
+     */
     function makeFunctionsPublic(state) {
         state.setSpeed    = setSpeed.bind(state);
         state.youtubeId   = youtubeId.bind(state);
