@@ -41,7 +41,7 @@ function () {
     function renderElements(state) {
         state.videoQualityControl.el = $(
             '<a href="#" class="quality_control" title="HD">HD</a>'
-        );
+        );// vaxXxa HTML
         state.videoControl.secondaryControlsEl.append(state.videoQualityControl.el);
 
         state.videoQualityControl.quality = null;

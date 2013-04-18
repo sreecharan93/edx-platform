@@ -41,7 +41,7 @@ function () {
                     '<div class="volume-slider"></div>' +
                 '</div>' +
             '</div>'
-        );
+        ); // vaxXxa HTML
 
         state.videoVolumeControl.buttonEl = state.videoVolumeControl.el.find('a');
         state.videoVolumeControl.volumeSliderEl = state.videoVolumeControl.el.find('.volume-slider');

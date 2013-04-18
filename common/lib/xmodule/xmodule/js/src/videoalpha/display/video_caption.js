@@ -53,7 +53,7 @@ function () {
     function renderElements(state) {
         state.videoCaption.loaded = false;
 
-        state.videoCaption.subtitlesEl = $('<ol class="subtitles"></ol>');
+        state.videoCaption.subtitlesEl = $('<ol class="subtitles"></ol>'); // vaxXxa HTML
         state.videoCaption.hideSubtitlesEl = $(
             '<a href="#" class="hide-subtitles" title="Turn off captions">Captions</a>'
         );

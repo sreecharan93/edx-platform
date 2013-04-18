@@ -45,7 +45,7 @@ function () {
                 '</a>' +
                 '<ol class="video_speeds"></ol>' +
             '</div>'
-        );
+        ); // vaxXxa HTML
 
         state.videoSpeedControl.videoSpeedsEl = state.videoSpeedControl.el.find('.video_speeds');
 

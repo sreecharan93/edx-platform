@@ -53,7 +53,7 @@ function () {
                     '<a href="#" class="add-fullscreen" title="Fill browser">Fill Browser</a>' +
                 '</div>' +
             '</div>'
-        );
+        ); //vaxXxa HTML
 
         state.videoControl.el = state.el.find('.video-controls');
         state.videoControl.el.append(el);
