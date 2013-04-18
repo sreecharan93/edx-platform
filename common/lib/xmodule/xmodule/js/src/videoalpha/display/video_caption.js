@@ -56,7 +56,7 @@ function () {
         state.videoCaption.subtitlesEl = $('<ol class="subtitles"></ol>'); // vaxXxa HTML
         state.videoCaption.hideSubtitlesEl = $(
             '<a href="#" class="hide-subtitles" title="Turn off captions">Captions</a>'
-        );
+        ); // vaxXxa HTML
 
         state.el.find('.video-wrapper').after(state.videoCaption.subtitlesEl);
         state.el.find('.video-controls .secondary-controls').append(state.videoCaption.hideSubtitlesEl);

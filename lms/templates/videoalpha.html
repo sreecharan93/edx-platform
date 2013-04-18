@@ -55,12 +55,18 @@
                     </div>
                     <a href="#" class="add-fullscreen" title="Fill browser">Fill Browser</a>
                     <a href="#" class="quality_control" title="HD">HD</a>
+
+                    % if show_captions:
+                    <a href="#" class="hide-subtitles" title="Turn off captions">Captions</a>
+                    % endif
                 </div>
             </div>
         </section>
   </article>
 
+      % if show_captions:
       <ol class="subtitles"></ol>
+      % endif
 
 </div>
 </div>
