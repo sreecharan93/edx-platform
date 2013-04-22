@@ -39,10 +39,7 @@ function () {
     //     make the created DOM elements available via the 'state' object. Much easier to work this
     //     way - you don't have to do repeated jQuery element selects.
     function renderElements(state) {
-        state.videoQualityControl.el = $(
-            '<a href="#" class="quality_control" title="HD">HD</a>'
-        );// vaxXxa HTML
-        state.videoControl.secondaryControlsEl.append(state.videoQualityControl.el);
+        videoQualityControl.el = state.el.find('a.quality_control');
 
         state.videoQualityControl.quality = null;
 

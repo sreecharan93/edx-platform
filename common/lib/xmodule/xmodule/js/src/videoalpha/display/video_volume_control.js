@@ -34,14 +34,7 @@ function () {
     //     make the created DOM elements available via the 'state' object. Much easier to work this
     //     way - you don't have to do repeated jQuery element selects.
     function renderElements(state) {
-        state.videoVolumeControl.el = $(
-            '<div class="volume">' +
-                '<a href="#"></a>' +
-                '<div class="volume-slider-container">' +
-                    '<div class="volume-slider"></div>' +
-                '</div>' +
-            '</div>'
-        ); // vaxXxa HTML
+        state.videoVolumeControl.el = state.el.find('div.volume');
 
         state.videoVolumeControl.buttonEl = state.videoVolumeControl.el.find('a');
         state.videoVolumeControl.volumeSliderEl = state.videoVolumeControl.el.find('.volume-slider');

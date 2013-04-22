@@ -37,15 +37,7 @@ function () {
     function renderElements(state) {
         state.videoSpeedControl.speeds = state.speeds;
 
-        state.videoSpeedControl.el = $(
-            '<div class="speeds">' +
-                '<a href="#">' +
-                    '<h3>Speed</h3>' +
-                    '<p class="active"></p>' +
-                '</a>' +
-                '<ol class="video_speeds"></ol>' +
-            '</div>'
-        ); // vaxXxa HTML
+        state.videoSpeedControl.el = state.el.find('div.speeds');
 
         state.videoSpeedControl.videoSpeedsEl = state.videoSpeedControl.el.find('.video_speeds');
 

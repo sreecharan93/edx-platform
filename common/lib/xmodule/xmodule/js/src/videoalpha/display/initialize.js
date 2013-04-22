@@ -222,7 +222,7 @@ function (VideoPlayer) {
         state.html5Sources = { 'mp4': null, 'webm': null, 'ogg': null };
 
         $.each(sources, function (name, source) {
-            if (source.length) {
+            if (source && source.length) {
                 state.html5Sources[name] = source;
             }
         });

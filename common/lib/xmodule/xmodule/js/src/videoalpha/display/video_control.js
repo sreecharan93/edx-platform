@@ -41,22 +41,9 @@ function () {
     //     way - you don't have to do repeated jQuery element selects.
     function renderElements(state) {
         var el, qTipConfig;
-        // REFACTOR move templates and css to one file- to python part
-        el = $(
-            '<div class="slider"></div>' +
-            '<div>' +
-                '<ul class="vcr">' +
-                    '<li><a class="video_control" href="#" title="Play"></a></li>' +
-                    '<li><div class="vidtime">0:00 / 0:00</div></li>' +
-                '</ul>' +
-                '<div class="secondary-controls">' +
-                    '<a href="#" class="add-fullscreen" title="Fill browser">Fill Browser</a>' +
-                '</div>' +
-            '</div>'
-        ); //vaxXxa HTML
 
         state.videoControl.el = state.el.find('.video-controls');
-        state.videoControl.el.append(el);
+        // state.videoControl.el.append(el);
 
         state.videoControl.sliderEl            = state.videoControl.el.find('.slider');
         state.videoControl.playPauseEl         = state.videoControl.el.find('.video_control');
