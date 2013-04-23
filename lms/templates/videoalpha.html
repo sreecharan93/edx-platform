@@ -56,7 +56,7 @@
                     <a href="#" class="add-fullscreen" title="Fill browser">Fill Browser</a>
                     <a href="#" class="quality_control" title="HD">HD</a>
 
-                    % if show_captions:
+                    % if show_captions == 'true':
                     <a href="#" class="hide-subtitles" title="Turn off captions">Captions</a>
                     % endif
                 </div>
@@ -64,7 +64,7 @@
         </section>
   </article>
 
-      % if show_captions:
+      % if show_captions == 'true':
       <ol class="subtitles"></ol>
       % endif
 

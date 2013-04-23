@@ -49,7 +49,10 @@ function (
         VideoProgressSlider(state);
         VideoVolumeControl(state);
         VideoSpeedControl(state);
-        VideoCaption(state);
+
+        if (state.config.show_captions) {
+            VideoCaption(state);
+        }
     };
 });
 

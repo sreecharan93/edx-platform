@@ -71,7 +71,7 @@ function (VideoPlayer) {
 
             'caption_data_dir':   state.el.data('caption-data-dir'),
             'caption_asset_path': state.el.data('caption-asset-path'),
-            'show_captions':      (state.el.data('show-captions').toString().toLowerCase === 'true'),
+            'show_captions':      (state.el.data('show-captions').toString().toLowerCase() === 'true'),
             'youtubeStreams':     state.el.data('streams'),
 
             'sub':                state.el.data('sub'),
@@ -101,7 +101,7 @@ function (VideoPlayer) {
                 }
             );
 
-            if (!state.config.sub.length) {
+            if (!state.config.sub || !state.config.sub.length) {
                 state.config.sub = '';
                 state.config.show_captions = false;
             }

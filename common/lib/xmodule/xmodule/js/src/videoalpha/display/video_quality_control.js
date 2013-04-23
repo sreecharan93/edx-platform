@@ -39,7 +39,7 @@ function () {
     //     make the created DOM elements available via the 'state' object. Much easier to work this
     //     way - you don't have to do repeated jQuery element selects.
     function renderElements(state) {
-        videoQualityControl.el = state.el.find('a.quality_control');
+        state.videoQualityControl.el = state.el.find('a.quality_control');
 
         state.videoQualityControl.quality = null;
 
