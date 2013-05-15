@@ -44,12 +44,12 @@ function () {
         state.videoControl.secondaryControlsEl.prepend(state.videoSpeedControl.el);
 
         $.each(state.videoSpeedControl.speeds, function(index, speed) {
-            var link;
-
-            link = $('<a>').attr({
+            // REFACTOR: Move all HTML into one function call.
+            var link = $('<a>').attr({
                 'href': '#'
              }).html('' + speed + 'x');
 
+             // REFACTOR: Use jQuery .data()
             state.videoSpeedControl.videoSpeedsEl.prepend($('<li>').attr('data-speed', speed).html(link));
         });
 
@@ -68,6 +68,7 @@ function () {
                 $(this).toggleClass('open');
             });
         } else {
+            // REFACTOR: Chain.
             state.videoSpeedControl.el.on('mouseenter', function() {
                 $(this).addClass('open');
             });
@@ -90,6 +91,7 @@ function () {
     // ***************************************************************
 
     function setSpeed(speed) {
+        // REFACTOR: Use chaining.
         this.videoSpeedControl.videoSpeedsEl.find('li').removeClass('active');
         this.videoSpeedControl.videoSpeedsEl.find("li[data-speed='" + speed + "']").addClass('active');
         this.videoSpeedControl.el.find('p.active').html('' + speed + 'x');
@@ -98,10 +100,12 @@ function () {
     function changeVideoSpeed(event) {
         event.preventDefault();
 
+        // REFACTOR: Cache parent el.
         if (!$(event.target).parent().hasClass('active')) {
             this.videoSpeedControl.currentSpeed = $(event.target).parent().data('speed');
 
             this.videoSpeedControl.setSpeed(
+                // To meet the API expected format.
                 parseFloat(this.videoSpeedControl.currentSpeed).toFixed(2).replace(/\.00$/, '.0')
             );
 
@@ -109,6 +113,7 @@ function () {
         }
     }
 
+    // REFACTOR.
     function reRender(params /*newSpeeds, currentSpeed*/) {
         var _this;
 

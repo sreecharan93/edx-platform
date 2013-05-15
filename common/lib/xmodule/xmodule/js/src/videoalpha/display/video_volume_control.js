@@ -44,6 +44,7 @@ function () {
         // Figure out what the current volume is. Set it up so that muting/unmuting works correctly.
         // If no information about volume level could be retrieved, then we will use the default
         // 100 level (full volume).
+        // REFACTOR: Remove unnecessary checks.
         state.videoVolumeControl.currentVolume = parseInt($.cookie('video_player_volume_level'), 10);
         state.videoVolumeControl.previousVolume = 100;
         if (

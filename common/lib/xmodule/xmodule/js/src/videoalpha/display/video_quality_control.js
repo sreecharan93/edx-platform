@@ -44,6 +44,7 @@ function () {
         state.videoQualityControl.quality = null;
 
         if (!onTouchBasedDevice()) {
+            // REFACTOR: Move qtip config to state.config
             state.videoQualityControl.el.qtip({
                 'position': {
                     'my': 'top right',
@@ -69,6 +70,7 @@ function () {
     function onQualityChange(value) {
         this.videoQualityControl.quality = value;
 
+        // refactor: Move constants to state.config.
         if ((value === 'hd720') || (value === 'hd1080') || (value === 'highres')) {
             this.videoQualityControl.el.addClass('active');
         } else {
@@ -83,6 +85,7 @@ function () {
 
         _ref = this.videoQualityControl.quality;
 
+        // refactor: Move constants to state.config.
         if ((_ref === 'hd720') || (_ref === 'hd1080') || (_ref === 'highres')) {
             newQuality = 'large';
         } else {

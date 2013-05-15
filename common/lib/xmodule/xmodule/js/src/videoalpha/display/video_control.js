@@ -40,7 +40,7 @@ function () {
     //     make the created DOM elements available via the 'state' object. Much easier to work this
     //     way - you don't have to do repeated jQuery element selects.
     function renderElements(state) {
-        var el, qTipConfig;
+        var qTipConfig;
 
         state.videoControl.el = state.el.find('.video-controls');
         // state.videoControl.el.append(el);
@@ -70,6 +70,8 @@ function () {
         }
 
         if (state.videoType === 'html5') {
+            // REFACTOR: constants move to initialize()
+            
             state.videoControl.fadeOutTimeout = 1400;
 
             state.videoControl.el.addClass('html5');
@@ -105,6 +107,9 @@ function () {
             this.controlShowLock = true;
 
             // Refactor: separate UI state in object. No code duplication.
+            // REFACTOR:
+            // 1.) Chain jQuery calls.
+            // 2.) Drop out common code.
             if (this.controlState === 'invisible') {
                 this.videoControl.el.show();
                 this.controlState = 'visible';
@@ -143,6 +148,7 @@ function () {
     }
 
     function play() {
+        // REFACTOR: this.videoControl.playPauseState should be bool.
         this.videoControl.playPauseEl.removeClass('play').addClass('pause').attr('title', 'Pause');
         this.videoControl.playPauseState = 'playing';
     }
@@ -168,17 +174,18 @@ function () {
         if (this.videoControl.fullScreenState) {
             this.videoControl.fullScreenState = false;
             this.el.removeClass('fullscreen');
-            this.videoControl.fullScreenEl.attr('title', 'Fill browser');
+            this.videoControl.fullScreenEl.attr('title', 'Fullscreen');
         } else {
             this.videoControl.fullScreenState = true;
             this.el.addClass('fullscreen');
-            this.videoControl.fullScreenEl.attr('title', 'Exit fill browser');
+            this.videoControl.fullScreenEl.attr('title', 'Exit fullscreen');
         }
 
         this.trigger(['videoCaption', 'resize'], null);
     }
 
     function exitFullScreen(event) {
+        // REFACTOR: Add variable instead of class.
         if ((this.el.hasClass('fullscreen')) && (event.keyCode === 27)) {
             this.videoControl.toggleFullScreen(event);
         }
