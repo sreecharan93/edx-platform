@@ -62,12 +62,12 @@ function (HTML5Video) {
         state.videoPlayer.currentTime = 0;
 
         state.videoPlayer.playerVars = {
-            'controls': 0,
-            'wmode': 'transparent',
-            'rel': 0,
-            'showinfo': 0,
-            'enablejsapi': 1,
-            'modestbranding': 1
+            controls: 0,
+            wmode: 'transparent',
+            rel: 0,
+            showinfo: 0,
+            enablejsapi: 1,
+            modestbranding: 1
         };
 
         if (state.currentPlayerMode !== 'flash') {
@@ -84,11 +84,11 @@ function (HTML5Video) {
 
         if (state.videoType === 'html5') {
             state.videoPlayer.player = new HTML5Video.Player(state.el, {
-                'playerVars':   state.videoPlayer.playerVars,
-                'videoSources': state.html5Sources,
-                'events': {
-                    'onReady':       state.videoPlayer.onReady,
-                    'onStateChange': state.videoPlayer.onStateChange
+                playerVars:   state.videoPlayer.playerVars,
+                videoSources: state.html5Sources,
+                events: {
+                    onReady:       state.videoPlayer.onReady,
+                    onStateChange: state.videoPlayer.onStateChange
                 }
             });
         } else { // if (state.videoType === 'youtube') {
@@ -98,12 +98,12 @@ function (HTML5Video) {
                 youTubeId = state.youtubeId('1.0');
             }
             state.videoPlayer.player = new YT.Player(state.id, {
-                'playerVars': state.videoPlayer.playerVars,
-                'videoId': youTubeId,
-                'events': {
-                    'onReady': state.videoPlayer.onReady,
-                    'onStateChange': state.videoPlayer.onStateChange,
-                    'onPlaybackQualityChange': state.videoPlayer.onPlaybackQualityChange
+                playerVars: state.videoPlayer.playerVars,
+                videoId: youTubeId,
+                events: {
+                    onReady: state.videoPlayer.onReady,
+                    onStateChange: state.videoPlayer.onStateChange,
+                    onPlaybackQualityChange: state.videoPlayer.onPlaybackQualityChange
                 }
             });
         }
@@ -249,8 +249,6 @@ function (HTML5Video) {
 
     function onReady() {
         var availablePlaybackRates, baseSpeedSubs, _this;
-        
-        // REFACTOR: Check if logic.
 
         availablePlaybackRates = this.videoPlayer.player.getAvailablePlaybackRates();
         if ((this.currentPlayerMode === 'html5') && (this.videoType === 'youtube')) {

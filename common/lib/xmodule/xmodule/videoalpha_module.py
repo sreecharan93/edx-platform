@@ -57,15 +57,16 @@ class VideoAlphaModule(VideoAlphaFields, XModule):
 
     js = {
         'js': [
-            resource_string(__name__, 'js/src/videoalpha/display/initialize.js'),
-            resource_string(__name__, 'js/src/videoalpha/display/html5_video.js'),
-            resource_string(__name__, 'js/src/videoalpha/display/video_player.js'),
-            resource_string(__name__, 'js/src/videoalpha/display/video_control.js'),
-            resource_string(__name__, 'js/src/videoalpha/display/video_quality_control.js'),
-            resource_string(__name__, 'js/src/videoalpha/display/video_progress_slider.js'),
-            resource_string(__name__, 'js/src/videoalpha/display/video_volume_control.js'),
-            resource_string(__name__, 'js/src/videoalpha/display/video_speed_control.js'),
-            resource_string(__name__, 'js/src/videoalpha/display/video_caption.js'),
+            resource_string(__name__, 'js/src/videoalpha/helper_utils.js'),
+            resource_string(__name__, 'js/src/videoalpha/initialize.js'),
+            resource_string(__name__, 'js/src/videoalpha/html5_video.js'),
+            resource_string(__name__, 'js/src/videoalpha/video_player.js'),
+            resource_string(__name__, 'js/src/videoalpha/video_control.js'),
+            resource_string(__name__, 'js/src/videoalpha/video_quality_control.js'),
+            resource_string(__name__, 'js/src/videoalpha/video_progress_slider.js'),
+            resource_string(__name__, 'js/src/videoalpha/video_volume_control.js'),
+            resource_string(__name__, 'js/src/videoalpha/video_speed_control.js'),
+            resource_string(__name__, 'js/src/videoalpha/video_caption.js'),
             resource_string(__name__, 'js/src/videoalpha/main.js')
         ]
     }
