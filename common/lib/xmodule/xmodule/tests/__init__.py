@@ -14,10 +14,15 @@ import fs.osfs
 
 import numpy
 
+import json
+from lxml import etree
+
 import calc
 import xmodule
 from xmodule.x_module import ModuleSystem
 from mock import Mock
+
+
 
 open_ended_grading_interface = {
         'url': 'blah/',
@@ -113,7 +118,7 @@ class ModelsTest(unittest.TestCase):
         self.assertTrue(exception_happened)
 
 
-class PostData:
+class PostData(object):
     """Class which emulate postdata."""
     def __init__(self, dict_data):
         self.dict_data = dict_data
