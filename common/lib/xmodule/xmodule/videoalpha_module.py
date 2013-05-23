@@ -132,9 +132,9 @@ class VideoAlphaModule(VideoAlphaFields, XModule):
             else:
                 obj_time = time.strptime(str_time, '%H:%M:%S')
                 return datetime.timedelta(
-                    hours=obj_time.tm_hour,
-                    minutes=obj_time.tm_min,
-                    seconds=obj_time.tm_sec
+                    hours=x.tm_hour,
+                    minutes=x.tm_min,
+                    seconds=x.tm_sec
                 ).total_seconds()
 
         return parse_time(xmltree.get('start_time')), parse_time(xmltree.get('end_time'))
