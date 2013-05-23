@@ -12,41 +12,12 @@ from xmodule.conditional_module import ConditionalDescriptor
 from xmodule.word_cloud_module import WordCloudDescriptor
 from xmodule.videoalpha_module import VideoAlphaDescriptor
 
-class PostData:
-    """Class which emulate postdata."""
-    def __init__(self, dict_data):
-        self.dict_data = dict_data
-
-    def getlist(self, key):
         """Get data by key from `self.dict_data`."""
-        return self.dict_data.get(key)
-
-
-class LogicTest(unittest.TestCase):
-    """Base class for testing xmodule logic."""
-    descriptor_class = None
-    raw_model_data = {}
-
-    def setUp(self):
-        class EmptyClass:
             """Empty object."""
-            pass
-
-        self.system = get_test_system()
-        self.descriptor = EmptyClass()
-
-        self.xmodule_class = self.descriptor_class.module_class
-        self.xmodule = self.xmodule_class(
-            self.system,
-            self.descriptor,
             self.raw_model_data
-        )
-
-    def ajax_request(self, dispatch, data):
-        """Call Xmodule.handle_ajax."""
+    def ajax_request(self, dispatch, get):
+        return json.loads(self.xmodule.handle_ajax(dispatch, get))
         return json.loads(self.xmodule.handle_ajax(dispatch, data))
-
-
 class PollModuleTest(LogicTest):
     """Logic tests for Poll Xmodule."""
     descriptor_class = PollDescriptor
