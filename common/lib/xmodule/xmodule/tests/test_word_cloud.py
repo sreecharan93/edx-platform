@@ -14,7 +14,7 @@ class WordCloudModuleTest(LogicTest):
     }
 
     def test_bad_ajax_request(self):
-
+        "Make sure that answer for incorrect request is error json"
         # TODO: move top global test. Formalize all our Xmodule errors.
         response = self.ajax_request('bad_dispatch', {})
         self.assertDictEqual(response, {
@@ -23,6 +23,7 @@ class WordCloudModuleTest(LogicTest):
         })
 
     def test_good_ajax_request(self):
+        "Make shure that ajax request works correctly"
         post_data = PostData({'student_words[]': ['cat', 'cat', 'dog', 'sun']})
         response = self.ajax_request('submit', post_data)
         self.assertEqual(response['status'], 'success')
