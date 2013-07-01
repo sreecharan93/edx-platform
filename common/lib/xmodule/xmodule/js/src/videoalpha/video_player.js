@@ -281,7 +281,7 @@ function (HTML5Video) {
             this.videoPlayer.player.setPlaybackRate(this.speed);
         }
 
-        if (!onTouchBasedDevice()) {
+        if (!onTouchBasedDevice() && $('.video:first').data('autoplay') === 'True') {
             this.videoPlayer.play();
         }
     }
