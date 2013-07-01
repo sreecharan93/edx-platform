@@ -130,7 +130,7 @@ class VideoAlphaModule(VideoAlphaFields, XModule):
             if str_time is None:
                 return ''
             else:
-                obj_time = time.strptime(str_time, '%H:%M:%S')
+                x = time.strptime(str_time, '%H:%M:%S')
                 return datetime.timedelta(
                     hours=x.tm_hour,
                     minutes=x.tm_min,
