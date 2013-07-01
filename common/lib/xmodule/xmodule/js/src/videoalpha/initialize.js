@@ -83,7 +83,14 @@ function (VideoPlayer) {
 
             fadeOutTimeout:     1400,
 
-            availableQualities: ['hd720', 'hd1080', 'highres']
+            availableQualities: ['hd720', 'hd1080', 'highres'],
+
+            qTipConfig: {
+                position: {
+                    my: 'top right',
+                    at: 'top center'
+                }
+            }
         };
 
         // Try to parse YouTube stream ID's. If
@@ -202,7 +209,7 @@ function (VideoPlayer) {
 
 
     function parseYoutubeStreams(state, youtubeStreams) {
-        if (!youtubeStreams.length) {
+        if (typeof youtubeStreams === 'undefined' || youtubeStreams.length === 0) {
             return false;
         }
 

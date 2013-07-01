@@ -36,7 +36,7 @@ function (
 
         // Check for existance of previous state, uninitialize it if necessary, and create a new state.
         // Store new state for future invocation of this module consturctor function.
-        if (previousState !== null) {
+        if (previousState !== null && typeof previousState.videoPlayer !== 'undefined') {
             previousState.videoPlayer.onPause();
         }
         state = {};

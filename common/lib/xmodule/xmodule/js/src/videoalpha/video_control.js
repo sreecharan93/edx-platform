@@ -40,8 +40,6 @@ function () {
     //     make the created DOM elements available via the 'state' object. Much easier to work this
     //     way - you don't have to do repeated jQuery element selects.
     function renderElements(state) {
-        var qTipConfig;
-
         state.videoControl.el = state.el.find('.video-controls');
         // state.videoControl.el.append(el);
 
@@ -56,15 +54,8 @@ function () {
         if (!onTouchBasedDevice()) {
             state.videoControl.pause();
 
-            qTipConfig = {
-                position: {
-                    my: 'top right',
-                    at: 'top center'
-                }
-            };
-
-            state.videoControl.playPauseEl.qtip(qTipConfig);
-            state.videoControl.fullScreenEl.qtip(qTipConfig);
+            state.videoControl.playPauseEl.qtip(state.config.qTipConfig);
+            state.videoControl.fullScreenEl.qtip(state.config.qTipConfig);
         } else {
             state.videoControl.play();
         }
