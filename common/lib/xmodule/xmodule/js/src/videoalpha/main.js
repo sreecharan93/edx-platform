@@ -1,7 +1,5 @@
 (function (requirejs, require, define) {
 
-// REFACTOR. Build JS doc. Add docs on how to build docs.
-
 // Main module.
 require(
 [

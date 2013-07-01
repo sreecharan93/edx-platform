@@ -44,7 +44,6 @@ function () {
         state.videoQualityControl.quality = null;
 
         if (!onTouchBasedDevice()) {
-            // REFACTOR: Move qtip config to state.config
             state.videoQualityControl.el.qtip({
                 position: {
                     my: 'top right',

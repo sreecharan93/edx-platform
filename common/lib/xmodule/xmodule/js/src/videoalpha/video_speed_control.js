@@ -95,7 +95,6 @@ function () {
 
         event.preventDefault();
 
-        // REFACTOR: Cache parent el.
         if (!parentEl.hasClass('active')) {
             this.videoSpeedControl.currentSpeed = parentEl.data('speed');
 

@@ -95,7 +95,6 @@ function () {
     // These are available via the 'state' object. Their context ('this' keyword) is the 'state' object.
     // The magic private function that makes them available and sets up their context is makeFunctionsPublic().
     // ***************************************************************
-    // REFACTOR document
     function showControls(event) {
         if (!this.controlShowLock) {
             if (!this.captionsHidden) {
