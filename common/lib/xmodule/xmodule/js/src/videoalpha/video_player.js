@@ -82,6 +82,13 @@ function (HTML5Video) {
           state.videoPlayer.playerVars.end = state.config.end;
         }
 
+        // There is a bug which prevents YouTube API to correctly set the speed to 1.0 from another speed
+        // in Firefox when in HTML5 mode. There is a fix which basically reloads the video at speed 1.0
+        // when this change is requested (instead of simply requesting a speed change to 1.0). This has to
+        // be done only when the video is being watched in Firefox. We need to figure out what browser is
+        // currently executing this code.
+        state.videoPlayer.isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+
         if (state.videoType === 'html5') {
             state.videoPlayer.player = new HTML5Video.Player(state.el, {
                 playerVars:   state.videoPlayer.playerVars,
@@ -184,9 +191,11 @@ function (HTML5Video) {
         newSpeed = parseFloat(newSpeed).toFixed(2).replace(/\.00$/, '.0');
         this.setSpeed(newSpeed, updateCookie);
 
-        if (this.currentPlayerMode === 'html5') {
-            this.videoPlayer.player.setPlaybackRate(newSpeed);
-        } else { // if (this.currentPlayerMode === 'flash') {
+        // We request the reloading of the video in the case when YouTube is in Flash player mode,
+        // or when we are in Firefox, and the new speed is 1.0. The second case is necessary to
+        // avoid the bug where in Firefox speed switching to 1.0 in HTML5 player mode is handled
+        // incorrectly by YouTube API.
+        if ((this.currentPlayerMode === 'flash') || (this.videoPlayer.isFirefox && newSpeed === '1.0')) {
             if (this.videoPlayer.isPlaying()) {
                 this.videoPlayer.player.loadVideoById(this.youtubeId(), this.videoPlayer.currentTime);
             } else {
@@ -194,6 +203,8 @@ function (HTML5Video) {
             }
 
             this.videoPlayer.updatePlayTime(this.videoPlayer.currentTime);
+        } else if (this.currentPlayerMode === 'html5') {
+            this.videoPlayer.player.setPlaybackRate(newSpeed);
         }
     }
 
