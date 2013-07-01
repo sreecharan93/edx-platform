@@ -53,6 +53,11 @@ function (
         if (state.config.show_captions) {
             VideoCaption(state);
         }
+
+        // Because the 'state' object is only available inside this closure, we will also make
+        // it available to the caller by returning it. This is necessary so that we can test
+        // VideoAlpha with Jasmine.
+        return state;
     };
 });
 
