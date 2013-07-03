@@ -8,6 +8,9 @@ window.YT =
     BUFFERING: 3
     CUED: 5
 
+# Time waitsFor() should wait for before failing a test.
+window.WAIT_TIMEOUT = 1000
+
 jasmine.getFixtures().fixturesPath = 'xmodule/js/fixtures'
 
 jasmine.stubbedMetadata =

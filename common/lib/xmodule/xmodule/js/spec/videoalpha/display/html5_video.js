@@ -1,320 +1,334 @@
-(function() {
-  describe('VideoAlpha HTML5Video', function() {
-    var state, player, playbackRates = [0.75, 1.0, 1.25, 1.5];;
+var TYPES = {
+    'undefined'        : 'undefined',
+    'number'           : 'number',
+    'boolean'          : 'boolean',
+    'string'           : 'string',
+    '[object Function]': 'function',
+    '[object RegExp]'  : 'regexp',
+    '[object Array]'   : 'array',
+    '[object Date]'    : 'date',
+    '[object Error]'   : 'error'
+},
+TOSTRING = Object.prototype.toString,
+STATUS = window.YT.PlayerState;
 
-    beforeEach(function() {
-      loadFixtures('videoalpha_html5.html');
-      state = new VideoAlpha('#example');
-      player = state.videoPlayer.player;
-    });
+function whatType(o) {
+    return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
+}
 
-    describe('events:', function() {
-      beforeEach(function() {
-        spyOn(player, 'callStateChangeCallback').andCallThrough();
-      });
-    
-      describe('click', function() {
-        describe('when player is paused', function() {
-          beforeEach(function() {
-            spyOn(player.video, 'play').andCallThrough();
-            player.playerState = 2;
-            $(player.videoEl).trigger('click');
-          });
+(function () {
+    describe('VideoAlpha HTML5Video', function () {
+        var state, player, playbackRates = [0.75, 1.0, 1.25, 1.5];
 
-          it('native play event was called', function() {
-            expect(player.video.play).toHaveBeenCalled();
-          });
+        beforeEach(function () {
+            loadFixtures('videoalpha_html5.html');
+            state = new VideoAlpha('#example');
+            player = state.videoPlayer.player;
 
-          it('player state was changed', function() {
-            waitsFor(function() {
-              return player.getPlayerState() !== 2; 
-            }, 'Player state should be changed', 1000);
-            runs(function() {
-              expect(player.getPlayerState()).toBe(1);
+            player.config.events.onReady = jasmine.createSpy('onReady');
+        });
+
+        describe('events:', function () {
+            beforeEach(function () {
+                spyOn(player, 'callStateChangeCallback').andCallThrough();
             });
-          });
 
-          it('callback was called', function() {
-            waitsFor(function() {
-              return state.videoPlayer.player.getPlayerState() !== 2;
-            }, 'Player state should be changed', 1000);
-            runs(function() {
-              expect(player.callStateChangeCallback).toHaveBeenCalled();
+            describe('click', function () {
+                describe('when player is paused', function () {
+                    beforeEach(function () {
+                        spyOn(player.video, 'play').andCallThrough();
+                        player.playerState = STATUS.PAUSED;
+                        $(player.videoEl).trigger('click');
+                    });
+
+                    it('native play event was called', function () {
+                        expect(player.video.play).toHaveBeenCalled();
+                    });
+
+                    it('player state was changed', function () {
+                        waitsFor(function () {
+                            return player.getPlayerState() !== STATUS.PAUSED;
+                        }, 'Player state should be changed', WAIT_TIMEOUT);
+
+                        runs(function () {
+                            expect(player.getPlayerState()).toBe(STATUS.PLAYING);
+                        });
+                    });
+
+                    it('callback was called', function () {
+                        waitsFor(function () {
+                            return state.videoPlayer.player.getPlayerState() !== STATUS.PAUSED;
+                        }, 'Player state should be changed', WAIT_TIMEOUT);
+
+                        runs(function () {
+                            expect(player.callStateChangeCallback).toHaveBeenCalled();
+                        });
+                    });
+                });
             });
-          });
-        });
-      });
 
-      describe('when player is played', function() {
-        beforeEach(function() {
-          spyOn(player.video, 'pause').andCallThrough();
-          player.playerState  = 1;
-          $(player.videoEl).trigger('click');
-        });
+            describe('when player is played', function () {
+                beforeEach(function () {
+                    spyOn(player.video, 'pause').andCallThrough();
+                    player.playerState  = STATUS.PLAYING;
+                    $(player.videoEl).trigger('click');
+                });
 
-        it('native event was called', function() {
-          expect(player.video.pause).toHaveBeenCalled();
-        });
+                it('native event was called', function () {
+                    expect(player.video.pause).toHaveBeenCalled();
+                });
 
-        it('player state was changed', function() {
-          waitsFor(function() {
-            return player.getPlayerState() !== 1;
-          }, 'Player state should be changed', 1000);
-          runs(function() {
-            expect(player.getPlayerState()).toBe(2);
-          });
-        });
+                it('player state was changed', function () {
+                    waitsFor(function () {
+                        return player.getPlayerState() !== STATUS.PLAYING;
+                    }, 'Player state should be changed', WAIT_TIMEOUT);
 
-        it('callback was called', function() {
-          waitsFor(function() {
-            return player.getPlayerState() !== 1;
-          }, 'Player state should be changed', 1000);
-          runs(function() {
-            expect(player.callStateChangeCallback).toHaveBeenCalled();
-          });
-        });
-      });
+                    runs(function () {
+                        expect(player.getPlayerState()).toBe(STATUS.PAUSED);
+                    });
+                });
 
-      describe('play', function() {
-        beforeEach(function() {
-          spyOn(player.video, 'play').andCallThrough();
-          player.playerState = 2;
-          player.playVideo();
-        });  
-        
-        it('native event was called', function() {
-          expect(player.video.play).toHaveBeenCalled();
-        });
+                it('callback was called', function () {
+                    waitsFor(function () {
+                        return player.getPlayerState() !== STATUS.PLAYING;
+                    }, 'Player state should be changed', WAIT_TIMEOUT);
 
-        it('player state was changed', function() {
-          waitsFor(function() {
-            return player.getPlayerState() !== 2;
-          }, 'Player state should be changed', 1000); // Why 1000ms and not something else?
-          runs(function() {
-            expect(player.getPlayerState()).toBe(1);
-          });
-        });
+                    runs(function () {
+                        expect(player.callStateChangeCallback).toHaveBeenCalled();
+                    });
+                });
+            });
 
-        it('callback was called', function() {
-          waitsFor(function() {
-            return player.getPlayerState() !== 2; 
-          }, 'Player state should be changed', 1000);
-          runs(function() {
-            expect(player.callStateChangeCallback).toHaveBeenCalled();
-          });
-        });
-      });
+            describe('play', function () {
+                beforeEach(function () {
+                    spyOn(player.video, 'play').andCallThrough();
+                    player.playerState = STATUS.PAUSED;
+                    player.playVideo();
+                });
 
-      describe('pause', function() {
-        beforeEach(function() {
-          spyOn(player.video, 'pause').andCallThrough();
-          player.playVideo();
-          player.pauseVideo();
-        });
+                it('native event was called', function () {
+                    expect(player.video.play).toHaveBeenCalled();
+                });
 
-        it('native event was called', function() {
-          expect(player.video.pause).toHaveBeenCalled();
-        });
+                it('player state was changed', function () {
+                    waitsFor(function () {
+                        return player.getPlayerState() !== STATUS.PAUSED;
+                    }, 'Player state should be changed', WAIT_TIMEOUT);
 
-        it('player state was changed', function() {
-          waitsFor(function() {
-            return player.getPlayerState() !== -1;
-          }, 'Player state should be changed', 1000);
-          runs(function() {
-            expect(player.getPlayerState()).toBe(2);
-          });
-        });
+                    runs(function () {
+                        expect(player.getPlayerState()).toBe(STATUS.PLAYING);
+                    });
+                });
 
-        it('callback was called', function() {
-          waitsFor(function() {
-            return player.getPlayerState() !== -1;
-          }, 'Player state should be changed', 1000);
-          runs(function() {
-            expect(player.callStateChangeCallback).toHaveBeenCalled();
-          });
-        });
-      });
-    
-      describe('canplay', function() {
-        beforeEach(function() {
-          waitsFor(function() {
-            return player.getPlayerState() !== -1;
-          }, 'Video cannot be played', 1000);
-        });
+                it('callback was called', function () {
+                    waitsFor(function () {
+                        return player.getPlayerState() !== STATUS.PAUSED;
+                    }, 'Player state should be changed', WAIT_TIMEOUT);
 
-        // FIX, DOESN'T PASS
-        it('player state was changed', function() {
-          runs(function() {
-            expect(player.getPlayerState()).toBe(2);
-          });
-        });
+                    runs(function () {
+                        expect(player.callStateChangeCallback).toHaveBeenCalled();
+                    });
+                });
+            });
 
-        // FIX, DOESN'T PASS
-        it('end property was defined', function() {
-          runs(function() {
-            expect(player.end).not.toBeNull();
-          });
-        });
+            describe('pause', function () {
+                beforeEach(function () {
+                    spyOn(player.video, 'pause').andCallThrough();
+                    player.playVideo();
+                    player.pauseVideo();
+                });
 
-        // FIX, DOESN'T PASS
-        it('start position was defined', function() {
-          runs(function() {
-            expect(player.video.currentTime).toBe(player.start);
-          });
-        });
+                it('native event was called', function () {
+                    expect(player.video.pause).toHaveBeenCalled();
+                });
 
-        // FIX, DOESN'T PASS
-        it('callback was called', function() {
-          runs(function() {
-            expect(state.videoPlayer.onReady).toHaveBeenCalled();
-          });
-        });
-      });
+                it('player state was changed', function () {
+                    waitsFor(function () {
+                        return player.getPlayerState() !== STATUS.UNSTARTED;
+                    }, 'Player state should be changed', WAIT_TIMEOUT);
 
-      describe('ended', function() {
-        beforeEach(function() {
-          waitsFor(function() {
-            return player.getPlayerState() !== -1;
-          }, 'Video cannot be played', 1000);
-        });
+                    runs(function () {
+                        expect(player.getPlayerState()).toBe(STATUS.PAUSED);
+                    });
+                });
 
-        // FIX, DOESN'T PASS
-        it('player state was changed', function() {
-          runs(function() {
-            jasmine.fireEvent(player.videoEl, "ended");
-            expect(player.getPlayerState()).toBe(2);
-          });
-        });
+                it('callback was called', function () {
+                    waitsFor(function () {
+                        return player.getPlayerState() !== STATUS.UNSTARTED;
+                    }, 'Player state should be changed', WAIT_TIMEOUT);
+                    runs(function () {
+                        expect(player.callStateChangeCallback).toHaveBeenCalled();
+                    });
+                });
+            });
 
-        // FIX, DOESN'T PASS
-        it('callback was called', function() {
-          jasmine.fireEvent(player.videoEl, "ended");
-          expect(player.callStateChangeCallback).toHaveBeenCalled();
-        });
-      });
-    });  
+            describe('canplay', function () {
+                beforeEach(function () {
+                    waitsFor(function () {
+                        return player.getPlayerState() !== STATUS.UNSTARTED;
+                    }, 'Video cannot be played', WAIT_TIMEOUT);
+                });
 
-    describe('methods', function() {
-      var volume, seek, duration, playbackRate;
+                it('player state was changed', function () {
+                    runs(function () {
+                        expect(player.getPlayerState()).toBe(STATUS.PAUSED);
+                    });
+                });
 
-      beforeEach(function() {
-        volume = player.video.volume;
-        seek = player.video.currentTime;
-        //FIX, DOESN'T PASS
-        /*waitsFor((function() {
-          volume = state.videoPlayer.player.video.volume;
-          seek = state.videoPlayer.player.video.currentTime;
-          state.videoPlayer.player.getPlayerState() === -1; //Temporary
-        }), 'Video cannot be played', 1000);*/
-      });
-      
-      it('pauseVideo', function() {
-        runs(function() {
-          spyOn(player.video, 'pause').andCallThrough();
-          player.pauseVideo();
-          expect(player.video.pause).toHaveBeenCalled();
-        });
-      });
-      
-      describe('seekTo', function() {
-        //FIX DOESN'T PASS
-        it('set new correct value', function() {
-          runs(function() {
-            player.seekTo(2);
-            expect(player.getCurrentTime()).toBe(2);
-          });
-        });
-          
-        it('set new inccorrect values', function() {
-          runs(function() {
-            player.seekTo(-50);
-            expect(player.getCurrentTime()).toBe(seek);
-            player.seekTo('5');
-            expect(player.getCurrentTime()).toBe(seek);
-            player.seekTo(500000);
-            expect(player.getCurrentTime()).toBe(seek);
-          });
-        });
-      });
+                it('end property was defined', function () {
+                    runs(function () {
+                        expect(player.end).not.toBeNull();
+                    });
+                });
 
-      describe('setVolume', function() {
-        it('set new correct value', function() {
-          runs(function() {
-            player.setVolume(50);
-            expect(player.getVolume()).toBe(50 * 0.01);
-          });
-        });
+                it('start position was defined', function () {
+                    runs(function () {
+                        expect(player.video.currentTime).toBe(player.start);
+                    });
+                });
 
-        it('set new incorrect values', function() {
-          runs(function() {
-            player.setVolume(-50);
-            expect(player.getVolume()).toBe(volume);
-            player.setVolume('5');
-            expect(player.getVolume()).toBe(volume);
-            player.setVolume(500000);
-            expect(player.getVolume()).toBe(volume);
-          });
-        });
-      });
+                it('onReady callback was called', function () {
+                    runs(function () {
+                        expect(player.config.events.onReady).toHaveBeenCalled();
+                    });
+                });
+            });
 
-      //FIX DOESN'T PASS
-      it('getCurrentTime', function() {
-        runs(function() {
-          player.video.currentTime = 3;
-          expect(player.getCurrentTime()).toBe(player.video.currentTime);
-        });
-      });
+            describe('ended', function () {
+                beforeEach(function () {
+                    waitsFor(function () {
+                        return player.getPlayerState() !== STATUS.UNSTARTED;
+                    }, 'Video cannot be played', WAIT_TIMEOUT);
+                });
 
-      it('playVideo', function() {
-        runs(function() {
-          spyOn(player.video, 'play').andCallThrough();
-          player.playVideo();
-          expect(player.video.play).toHaveBeenCalled();
-        });
-      });
+                it('player state was changed', function () {
+                    runs(function () {
+                        jasmine.fireEvent(player.video, 'ended');
+                        expect(player.getPlayerState()).toBe(STATUS.ENDED);
+                    });
+                });
 
-      it('getPlayerState', function() {
-        runs(function() {
-          player.playerState = 1;
-          expect(player.getPlayerState()).toBe(1);
-          player.playerState = 0;
-          expect(player.getPlayerState()).toBe(0);
-        });
-      });
+                it('callback was called', function () {
+                    jasmine.fireEvent(player.video, 'ended');
+                    expect(player.callStateChangeCallback).toHaveBeenCalled();
+                });
+            });
+        }); // End-of: describe('events:', function () {
 
-      it('getVolume', function() {
-        runs(function() {
-          volume = player.video.volume = 0.5;
-          expect(player.getVolume()).toBe(volume);
-        });
-      });
+        describe('methods', function () {
+            var volume, seek, duration, playbackRate;
 
-      //FIX DOESN'T PASS
-      it('getDuration', function() {
-        runs(function() {
-          duration = player.video.duration;
-          expect(player.getDuration()).toBe(duration);
-        });
-      });
+            beforeEach(function () {
+                waitsFor(function () {
+                    volume = player.video.volume;
+                    seek = player.video.currentTime;
+                    return player.playerState === STATUS.PAUSED;
+                }, 'Video cannot be played', WAIT_TIMEOUT);
+            });
 
-      describe('setPlaybackRate', function() {
-        it('set a correct value', function() {
-          playbackRate = 1.5;
-          player.setPlaybackRate(playbackRate);
-          expect(player.video.playbackRate).toBe(playbackRate);
-        });
+            it('pauseVideo', function () {
+                runs(function () {
+                    spyOn(player.video, 'pause').andCallThrough();
+                    player.pauseVideo();
+                    expect(player.video.pause).toHaveBeenCalled();
+                });
+            });
 
-        it('set NaN value', function() {
-          playbackRate = NaN;
-          player.setPlaybackRate(playbackRate);
-          expect(player.video.playbackRate).toBe(1.0);
-        });
-      });
+            describe('seekTo', function () {
+                it('set new correct value', function () {
+                    runs(function () {
+                        player.seekTo(2);
+                        expect(player.getCurrentTime()).toBe(2);
+                    });
+                });
 
-      it('getAvailablePlaybackRates', function() {
-        expect(player.getAvailablePlaybackRates()).toEqual(playbackRates);
-      });
+                it('set new inccorrect values', function () {
+                    runs(function () {
+                        player.seekTo(-50);
+                        expect(player.getCurrentTime()).toBe(seek);
+                        player.seekTo('5');
+                        expect(player.getCurrentTime()).toBe(seek);
+                        player.seekTo(500000);
+                        expect(player.getCurrentTime()).toBe(seek);
+                    });
+                });
+            });
+
+            describe('setVolume', function () {
+                it('set new correct value', function () {
+                    runs(function () {
+                        player.setVolume(50);
+                        expect(player.getVolume()).toBe(50 * 0.01);
+                    });
+                });
+
+                it('set new incorrect values', function () {
+                    runs(function () {
+                        player.setVolume(-50);
+                        expect(player.getVolume()).toBe(volume);
+                        player.setVolume('5');
+                        expect(player.getVolume()).toBe(volume);
+                        player.setVolume(500000);
+                        expect(player.getVolume()).toBe(volume);
+                    });
+                });
+            });
+
+            it('getCurrentTime', function () {
+                runs(function () {
+                    player.video.currentTime = 3;
+                    expect(player.getCurrentTime()).toBe(player.video.currentTime);
+                });
+            });
+
+            it('playVideo', function () {
+                runs(function () {
+                    spyOn(player.video, 'play').andCallThrough();
+                    player.playVideo();
+                    expect(player.video.play).toHaveBeenCalled();
+                });
+            });
+
+            it('getPlayerState', function () {
+                runs(function () {
+                    player.playerState = STATUS.PLAYING;
+                    expect(player.getPlayerState()).toBe(STATUS.PLAYING);
+                    player.playerState = STATUS.ENDED;
+                    expect(player.getPlayerState()).toBe(STATUS.ENDED);
+                });
+            });
+
+            it('getVolume', function () {
+                runs(function () {
+                    volume = player.video.volume = 0.5;
+                    expect(player.getVolume()).toBe(volume);
+                });
+            });
+
+            it('getDuration', function () {
+                runs(function () {
+                    duration = player.video.duration;
+                    expect(player.getDuration()).toBe(duration);
+                });
+            });
+
+            describe('setPlaybackRate', function () {
+                it('set a correct value', function () {
+                    playbackRate = 1.5;
+                    player.setPlaybackRate(playbackRate);
+                    expect(player.video.playbackRate).toBe(playbackRate);
+                });
+
+                it('set NaN value', function () {
+                    playbackRate = NaN;
+                    player.setPlaybackRate(playbackRate);
+                    expect(player.video.playbackRate).toBe(1.0);
+                });
+            });
+
+            it('getAvailablePlaybackRates', function () {
+                expect(player.getAvailablePlaybackRates()).toEqual(playbackRates);
+            });
+        }); // End-of: describe('methods', function () {
     });
-
-  });
 }).call(this);
