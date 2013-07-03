@@ -1,6 +1,6 @@
 (function() {
   describe('VideoAlpha HTML5Video', function() {
-    var state, player;
+    var state, player, playbackRates = [0.75, 1.0, 1.25, 1.5];;
 
     beforeEach(function() {
       loadFixtures('videoalpha_html5.html');
@@ -14,7 +14,6 @@
       });
     
       describe('click', function() {
-        var playbackRates = [0.75, 1.0, 1.25, 1.5];
         describe('when player is paused', function() {
           beforeEach(function() {
             spyOn(player.video, 'play').andCallThrough();
@@ -208,7 +207,7 @@
           state.videoPlayer.player.getPlayerState() === -1; //Temporary
         }), 'Video cannot be played', 1000);*/
       });
-
+      
       it('pauseVideo', function() {
         runs(function() {
           spyOn(player.video, 'pause').andCallThrough();
@@ -216,7 +215,7 @@
           expect(player.video.pause).toHaveBeenCalled();
         });
       });
-
+      
       describe('seekTo', function() {
         //FIX DOESN'T PASS
         it('set new correct value', function() {
@@ -312,7 +311,6 @@
         });
       });
 
-      //FIX DOESN'T PASS
       it('getAvailablePlaybackRates', function() {
         expect(player.getAvailablePlaybackRates()).toEqual(playbackRates);
       });
