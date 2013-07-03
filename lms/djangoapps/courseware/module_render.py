@@ -27,7 +27,7 @@ from xmodule.modulestore import Location
 from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.exceptions import ItemNotFoundError
 from xmodule.x_module import ModuleSystem
-from xmodule_modifiers import replace_course_urls, replace_static_urls, add_histogram, wrap_xmodule
+from xmodule_modifiers import replace_course_urls, replace_static_urls, add_histogram, wrap_xmodule, save_module
 
 import static_replace
 from psychometrics.psychoanalyze import make_psychometrics_data_update_handler
@@ -225,7 +225,7 @@ def get_module_for_descriptor_internal(user, descriptor, model_data_cache, cours
                                                            userid=str(user.id),
                                                            mod_id=descriptor.location.url(),
                                                            dispatch=dispatch),
-                                       )
+                                               )
         return xqueue_callback_url_prefix + relative_xqueue_callback_url
 
     # Default queuename is course-specific and is derived from the course that
@@ -233,11 +233,12 @@ def get_module_for_descriptor_internal(user, descriptor, model_data_cache, cours
     # TODO: Queuename should be derived from 'course_settings.json' of each course
     xqueue_default_queuename = descriptor.location.org + '-' + descriptor.location.course
 
-    xqueue = {'interface': xqueue_interface,
-              'construct_callback': make_xqueue_callback,
-              'default_queuename': xqueue_default_queuename.replace(' ', '_'),
-              'waittime': settings.XQUEUE_WAITTIME_BETWEEN_REQUESTS
-             }
+    xqueue = {
+        'interface': xqueue_interface,
+        'construct_callback': make_xqueue_callback,
+        'default_queuename': xqueue_default_queuename.replace(' ', '_'),
+        'waittime': settings.XQUEUE_WAITTIME_BETWEEN_REQUESTS
+    }
 
     # This is a hacky way to pass settings to the combined open ended xmodule
     # It needs an S3 interface to upload images to S3
@@ -371,7 +372,7 @@ def get_module_for_descriptor_internal(user, descriptor, model_data_cache, cours
     system.set('user_is_staff', has_access(user, descriptor.location, 'staff', course_id))
     _get_html = module.get_html
 
-    if wrap_xmodule_display == True:
+    if wrap_xmodule_display is True:
         _get_html = wrap_xmodule(module.get_html, module, 'xmodule_display.html')
 
     module.get_html = replace_static_urls(
@@ -387,6 +388,8 @@ def get_module_for_descriptor_internal(user, descriptor, model_data_cache, cours
         if has_access(user, module, 'staff', course_id):
             module.get_html = add_histogram(module.get_html, module, user)
 
+    # force the module to save after rendering
+    module.get_html = save_module(module.get_html, module)
     return module
 
 
@@ -432,6 +435,8 @@ def xqueue_callback(request, course_id, userid, mod_id, dispatch):
     try:
         # Can ignore the return value--not used for xqueue_callback
         instance.handle_ajax(dispatch, data)
+        # save any state changed
+        instance.save()
     except:
         log.exception("error processing ajax call")
         raise
@@ -503,6 +508,8 @@ def modx_dispatch(request, dispatch, location, course_id):
     # Let the module handle the AJAX
     try:
         ajax_return = instance.handle_ajax(dispatch, data)
+        # save all fields
+        instance.save()
 
     # If we can't find the module, respond with a 404
     except NotFoundError:
