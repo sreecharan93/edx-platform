@@ -1,21 +1,3 @@
-var TYPES = {
-    'undefined'        : 'undefined',
-    'number'           : 'number',
-    'boolean'          : 'boolean',
-    'string'           : 'string',
-    '[object Function]': 'function',
-    '[object RegExp]'  : 'regexp',
-    '[object Array]'   : 'array',
-    '[object Date]'    : 'date',
-    '[object Error]'   : 'error'
-},
-TOSTRING = Object.prototype.toString,
-STATUS = window.YT.PlayerState;
-
-function whatType(o) {
-    return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
-}
-
 (function () {
     describe('VideoAlpha HTML5Video', function () {
         var state, player, playbackRates = [0.75, 1.0, 1.25, 1.5];

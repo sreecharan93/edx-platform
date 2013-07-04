@@ -8,6 +8,23 @@ window.YT =
     BUFFERING: 3
     CUED: 5
 
+window.TYPES =
+  'undefined'        : 'undefined'
+  'number'           : 'number'
+  'boolean'          : 'boolean'
+  'string'           : 'string'
+  '[object Function]': 'function'
+  '[object RegExp]'  : 'regexp'
+  '[object Array]'   : 'array'
+  '[object Date]'    : 'date'
+  '[object Error]'   : 'error'
+
+window.TOSTRING = Object.prototype.toString
+window.STATUS = window.YT.PlayerState
+
+window.whatType = (o) ->
+  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
+
 # Time waitsFor() should wait for before failing a test.
 window.WAIT_TIMEOUT = 1000
 
