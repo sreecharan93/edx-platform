@@ -44,3 +44,5 @@ node_modules
 .prereqs_cache
 autodeploy.properties
 .ws_migrations_complete
+test.mp4
+test.webm
