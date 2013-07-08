@@ -12,9 +12,11 @@ define(
 'videoalpha/display/video_progress_slider.js',
 [],
 function () {
+console.log('1');
 
     // VideoProgressSlider() function - what this module "exports".
     return function (state) {
+console.log('2');
         state.videoProgressSlider = {};
 
         makeFunctionsPublic(state);
@@ -31,6 +33,7 @@ function () {
     //     Functions which will be accessible via 'state' object. When called, these functions will
     //     get the 'state' object as a context.
     function makeFunctionsPublic(state) {
+console.log('3');
         state.videoProgressSlider.onSlide        = onSlide.bind(state);
         state.videoProgressSlider.onChange       = onChange.bind(state);
         state.videoProgressSlider.onStop         = onStop.bind(state);
@@ -44,6 +47,7 @@ function () {
     //     make the created DOM elements available via the 'state' object. Much easier to work this
     //     way - you don't have to do repeated jQuery element selects.
     function renderElements(state) {
+console.log('4');
         if (!onTouchBasedDevice()) {
             state.videoProgressSlider.el = state.videoControl.sliderEl;
 
@@ -56,10 +60,12 @@ function () {
     //
     //     Bind any necessary function callbacks to DOM events (click, mousemove, etc.).
     function bindHandlers(state) {
+console.log('5');
 
     }
 
     function buildSlider(state) {
+console.log('6');
         state.videoProgressSlider.slider = state.videoProgressSlider.el.slider({
             range: 'min',
             change: state.videoProgressSlider.onChange,
@@ -69,6 +75,7 @@ function () {
     }
 
     function buildHandle(state) {
+console.log('7');
         state.videoProgressSlider.handle = state.videoProgressSlider.el.find('.ui-slider-handle');
 
         state.videoProgressSlider.handle.qtip({
@@ -95,16 +102,19 @@ function () {
     // ***************************************************************
 
     function onSlide(event, ui) {
+console.log('8');
         this.videoProgressSlider.frozen = true;
         this.videoProgressSlider.updateTooltip(ui.value);
         this.trigger(['videoPlayer', 'onSlideSeek'], ui.value);
     }
 
     function onChange(event, ui) {
+console.log('9');
         this.videoProgressSlider.updateTooltip(ui.value);
     }
 
     function onStop(event, ui) {
+console.log('10');
         var _this = this;
 
         this.videoProgressSlider.frozen = true;
@@ -112,15 +122,18 @@ function () {
         this.trigger(['videoPlayer', 'onSlideSeek'], ui.value);
 
         setTimeout(function() {
+console.log('11');
             _this.videoProgressSlider.frozen = false;
         }, 200);
     }
 
     function updateTooltip(value) {
+console.log('12');
         this.videoProgressSlider.handle.qtip('option', 'content.text', '' + Time.format(value));
     }
 
     function updatePlayTime(params) {
+console.log('13');
         if ((this.videoProgressSlider.slider) && (!this.videoProgressSlider.frozen)) {
             this.videoProgressSlider.slider
                 .slider('option', 'max', params.duration)

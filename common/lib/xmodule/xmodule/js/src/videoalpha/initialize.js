@@ -26,7 +26,7 @@ function (VideoPlayer) {
      */
     return function (state, element) {
         makeFunctionsPublic(state);
-        renderElements(element);
+        state.renderElements(element);
     };
 
     // ***************************************************************
@@ -50,6 +50,10 @@ function (VideoPlayer) {
         // Old private functions. Now also public so that can be
         // tested by Jasmine.
         state.renderElements = renderElements.bind(state);
+        state.parseSpeed = parseSpeed.bind(state);
+        state.fetchMetadata = fetchMetadata.bind(state);
+        state.parseYoutubeStreams = parseYoutubeStreams.bind(state);
+        state.parseVideoSources = parseVideoSources.bind(state);
     }
 
     // function renderElements(state)
@@ -58,7 +62,8 @@ function (VideoPlayer) {
     //     make the created DOM elements available via the 'state' object. Much easier to work this
     //     way - you don't have to do repeated jQuery element selects.
     function renderElements(element) {
-        var onPlayerReadyFunc;
+        var onPlayerReadyFunc,
+            _this = this;
 
         // This is used in places where we instead would have to check if an element has a CSS class 'fullscreen'.
         this.isFullScreen = false;
@@ -98,18 +103,18 @@ function (VideoPlayer) {
         };
 
         // Try to parse YouTube stream ID's. If
-        if (parseYoutubeStreams(this.config.youtubeStreams)) {
+        if (this.parseYoutubeStreams(this.config.youtubeStreams)) {
             this.videoType = 'youtube';
 
-            fetchMetadata();
-            parseSpeed();
+            this.fetchMetadata();
+            this.parseSpeed();
         }
 
         // If we do not have YouTube ID's, try parsing HTML5 video sources.
         else {
             this.videoType = 'html5';
 
-            parseVideoSources(
+            this.parseVideoSources(
                 {
                     mp4: this.config.mp4Source,
                     webm: this.config.webmSource,
@@ -166,13 +171,13 @@ function (VideoPlayer) {
         // the proper mode from the start (not having to change mode later on).
         (function (currentPlayerMode) {
             if ((currentPlayerMode === 'html5') || (currentPlayerMode === 'flash')) {
-                this.currentPlayerMode = currentPlayerMode;
+                _this.currentPlayerMode = currentPlayerMode;
             } else {
                 $.cookie('current_player_mode', 'html5', {
                     expires: 3650,
                     path: '/'
                 });
-                this.currentPlayerMode = 'html5';
+                _this.currentPlayerMode = 'html5';
             }
         }($.cookie('current_player_mode')));
 
@@ -210,10 +215,13 @@ function (VideoPlayer) {
     //         false: We don't have YouTube video IDs to work with; most likely we have HTML5 video sources.
     //         true: Parsing of YouTube video IDs went OK, and we can proceed onwards to play YouTube videos.
     function parseYoutubeStreams(youtubeStreams) {
+        var _this;
+
         if (typeof youtubeStreams === 'undefined' || youtubeStreams.length === 0) {
             return false;
         }
 
+        _this = this;
         this.videos = {};
 
         $.each(youtubeStreams.split(/,/), function(index, video) {
@@ -222,7 +230,7 @@ function (VideoPlayer) {
             video = video.split(/:/);
             speed = parseFloat(video[0]).toFixed(2).replace(/\.00$/, '.0');
 
-            this.videos[speed] = video[1];
+            _this.videos[speed] = video[1];
         });
 
         return true;
@@ -233,6 +241,8 @@ function (VideoPlayer) {
     //     Take the HTML5 sources (URLs of videos), and make them available explictly for each type
     //     of video format (mp4, webm, ogg).
     function parseVideoSources(sources) {
+        var _this = this;
+
         this.html5Sources = {
             mp4: null,
             webm: null,
@@ -241,7 +251,7 @@ function (VideoPlayer) {
 
         $.each(sources, function (name, source) {
             if (source && source.length) {
-                this.html5Sources[name] = source;
+                _this.html5Sources[name] = source;
             }
         });
     }
@@ -252,11 +262,13 @@ function (VideoPlayer) {
     //     not available while the video is loading. For example the length of the video can be
     //     determined from the meta data.
     function fetchMetadata() {
+        var _this = this;
+
         this.metadata = {};
 
         $.each(this.videos, function (speed, url) {
             $.get('https://gdata.youtube.com/feeds/api/videos/' + url + '?v=2&alt=jsonc', (function(data) {
-                this.metadata[data.data.id] = data.data;
+                _this.metadata[data.data.id] = data.data;
             }), 'jsonp');
         });
     }
