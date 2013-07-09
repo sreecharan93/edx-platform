@@ -150,7 +150,8 @@ CMS.Views.ValidatingView = Backbone.View.extend({
                 success: function() {
                     self.showSavedBar();
                 },
-                silent: true
+                silent: true,
+                wait: true
             }
         );
     }
