@@ -1,50 +1,51 @@
 (function() {
   describe('VideoSpeedControlAlpha', function() {
+    var state, videoPlayer, videoControl, videoSpeedControl;
+
     beforeEach(function() {
       window.onTouchBasedDevice = jasmine.createSpy('onTouchBasedDevice').andReturn(false);
-      jasmine.stubVideoPlayerAlpha(this);
-      $('.speeds').remove();
+      //TODO: modify jasmine.stubVideoPlayerAlpha by incorporating the changes below
+      //jasmine.stubVideoPlayerAlpha(this);
     });
 
     describe('constructor', function() {
       describe('always', function() {
         beforeEach(function() {
-          this.speedControl = new VideoSpeedControlAlpha({
-            el: $('.secondary-controls'),
-            speeds: this.video.speeds,
-            currentSpeed: '1.0'
-          });
+          loadFixtures('videoalpha_all.html');
+          state = new VideoAlpha('#example');
+          videoControl = state.videoControl;
+          videoSpeedControl = state.videoSpeedControl;
         });
 
         it('add the video speed control to player', function() {
-          var li, secondaryControls, _this = this;
+          var li, secondaryControls;
           secondaryControls = $('.secondary-controls');
           li = secondaryControls.find('.video_speeds li');
           expect(secondaryControls).toContain('.speeds');
           expect(secondaryControls).toContain('.video_speeds');
           expect(secondaryControls.find('p.active').text()).toBe('1.0x');
-          expect(li.filter('.active')).toHaveData('speed', this.speedControl.currentSpeed);
-          expect(li.length).toBe(this.speedControl.speeds.length);
+          expect(li.filter('.active')).toHaveData('speed', videoSpeedControl.currentSpeed);
+          expect(li.length).toBe(videoSpeedControl.speeds.length);
           $.each(li.toArray().reverse(), function(index, link) {
-            expect($(link)).toHaveData('speed', _this.speedControl.speeds[index]);
-            expect($(link).find('a').text()).toBe(_this.speedControl.speeds[index] + 'x');
+            expect($(link)).toHaveData('speed', videoSpeedControl.speeds[index]);
+            // TODO: Fails
+            expect($(link).find('a').text()).toBe(videoSpeedControl.speeds[index] + 'x');
           });
         });
 
         it('bind to change video speed link', function() {
-          expect($('.video_speeds a')).toHandleWith('click', this.speedControl.changeVideoSpeed);
+          // TODO: Fails
+          expect($('.video_speeds a')).toHandleWith('click', videoSpeedControl.changeVideoSpeed);
         });
       });
 
       describe('when running on touch based device', function() {
         beforeEach(function() {
           window.onTouchBasedDevice.andReturn(true);
-          $('.speeds').removeClass('open');
-          this.speedControl = new VideoSpeedControlAlpha({
-            el: $('.secondary-controls'),
-            speeds: this.video.speeds,
-            currentSpeed: '1.0'
-          });
+          loadFixtures('videoalpha_all.html');
+          state = new VideoAlpha('#example');
+          videoControl = state.videoControl;
+          videoSpeedControl = state.videoSpeedControl;
         });
 
         it('open the speed toggle on click', function() {
@@ -57,12 +58,10 @@
       
       describe('when running on non-touch based device', function() {
         beforeEach(function() {
-          $('.speeds').removeClass('open');
-          this.speedControl = new VideoSpeedControlAlpha({
-            el: $('.secondary-controls'),
-            speeds: this.video.speeds,
-            currentSpeed: '1.0'
-          });
+          loadFixtures('videoalpha_all.html');
+          state = new VideoAlpha('#example');
+          videoControl = state.videoControl;
+          videoSpeedControl = state.videoSpeedControl;
         });
 
         it('open the speed toggle on hover', function() {
@@ -86,51 +85,49 @@
 
     describe('changeVideoSpeed', function() {
       beforeEach(function() {
-        this.speedControl = new VideoSpeedControlAlpha({
-          el: $('.secondary-controls'),
-          speeds: this.video.speeds,
-          currentSpeed: '1.0'
-        });
-        this.video.setSpeed('1.0');
+        loadFixtures('videoalpha_all.html');
+        state = new VideoAlpha('#example');
+        videoPlayer = state.videoPlayer;
+        videoControl = state.videoControl;
+        videoSpeedControl = state.videoSpeedControl;
+        videoSpeedControl.setSpeed(1.0);
+        //this.video.setSpeed('1.0');
       });
 
       describe('when new speed is the same', function() {
         beforeEach(function() {
-          spyOnEvent(this.speedControl, 'speedChange');
+          spyOnEvent(videoPlayer, 'onSpeedChange');
           $('li[data-speed="1.0"] a').click();
         });
         
         it('does not trigger speedChange event', function() {
-          expect('speedChange').not.toHaveBeenTriggeredOn(this.speedControl);
+          expect('onSpeedChange').not.toHaveBeenTriggeredOn(videoPlayer);
         });
       });
       
       describe('when new speed is not the same', function() {
         beforeEach(function() {
-          var _this = this;
-          this.newSpeed = null;
-          $(this.speedControl).bind('speedChange', function(event, newSpeed) {
-            _this.newSpeed = newSpeed;
-          });
-          spyOnEvent(this.speedControl, 'speedChange');
+          spyOnEvent(videoPlayer, 'onSpeedChange');
           $('li[data-speed="0.75"] a').click();
         });
+
         it('trigger speedChange event', function() {
-          expect('speedChange').toHaveBeenTriggeredOn(this.speedControl);
-          expect(this.newSpeed).toEqual(0.75);
+          // TODO: Fails
+          expect('onSpeedChange').toHaveBeenTriggeredOn(videoPlayer);
+          // TODO: Fails
+          expect(videoSpeedControl.currentSpeed).toEqual(0.75);
         });
       });
     });
     
     describe('onSpeedChange', function() {
       beforeEach(function() {
-        this.speedControl = new VideoSpeedControlAlpha({
-          el: $('.secondary-controls'),
-          speeds: this.video.speeds,
-          currentSpeed: '1.0'
-        });
+        loadFixtures('videoalpha_all.html');
+        state = new VideoAlpha('#example');
+        videoControl = state.videoControl;
+        videoSpeedControl = state.videoSpeedControl;
         $('li[data-speed="1.0"] a').addClass('active');
-        this.speedControl.setSpeed('0.75');
+        videoSpeedControl.setSpeed(0.75);
       });
       
       it('set the new speed as active', function() {

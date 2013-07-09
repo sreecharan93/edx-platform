@@ -1,6 +1,6 @@
 (function() {
   describe('VideoVolumeControlAlpha', function() {
-    var state, player, videoControl, videoVolumeControl;
+    var state, videoControl, videoVolumeControl;
 
     describe('constructor', function() {
       beforeEach(function() {
@@ -9,7 +9,6 @@
         //state = jasmine.stubVideoPlayerAlpha(this);
         loadFixtures('videoalpha_all.html');
         state = new VideoAlpha('#example');
-        player = state.videoPlayer.player;
         videoControl = state.videoControl;
         videoVolumeControl = state.videoVolumeControl;
       });
@@ -49,7 +48,6 @@
       beforeEach(function() {
         loadFixtures('videoalpha_all.html');
         state = new VideoAlpha('#example');
-        player = state.videoPlayer.player;
         videoControl = state.videoControl;
         videoVolumeControl = state.videoVolumeControl;
       });
@@ -91,7 +89,6 @@
       beforeEach(function() {
         loadFixtures('videoalpha_all.html');
         state = new VideoAlpha('#example');
-        player = state.videoPlayer.player;
         videoControl = state.videoControl;
         videoVolumeControl = state.videoVolumeControl;
       });
