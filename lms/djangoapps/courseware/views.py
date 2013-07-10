@@ -167,6 +167,7 @@ def save_child_position(seq_module, child_name):
             # Only save if position changed
             if position != seq_module.position:
                 seq_module.position = position
+    seq_module.save()
 
 
 def check_for_active_timelimit_module(request, course_id, course):
