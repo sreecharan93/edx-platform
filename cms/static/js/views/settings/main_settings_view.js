@@ -123,7 +123,13 @@ CMS.Views.Settings.Details = CMS.Views.ValidatingView.extend({
         timefield.on('changeTime', setfield);
 
         datefield.datepicker('setDate', this.model.get(fieldName));
-        if (this.model.has(fieldName)) timefield.timepicker('setTime', this.model.get(fieldName));
+        // timepicker doesn't let us set null, so check that we have a time
+        if (this.model.has(fieldName)) {
+            timefield.timepicker('setTime', this.model.get(fieldName));
+        } // but reset the field either way
+        else {
+            timefield.val('');
+        }
     },
 
     updateModel: function(event) {
@@ -163,12 +169,16 @@ CMS.Views.Settings.Details = CMS.Views.ValidatingView.extend({
         // TODO implement
     },
 
-    removeVideo: function() {
+    removeVideo: function(event) {
+        event.preventDefault();
         if (this.model.has('intro_video')) {
             this.model.set_videosource(null);
             this.$el.find(".current-course-introduction-video iframe").attr("src", "");
             this.$el.find('#' + this.fieldToSelectorMap['intro_video']).val("");
             this.$el.find('.remove-course-introduction-video').hide();
+            this.showNotificationBar(this.save_message,
+                                     _.bind(this.saveView, this),
+                                     _.bind(this.revertView, this));
         }
     },
     codeMirrors : {},
