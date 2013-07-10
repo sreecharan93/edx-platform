@@ -150,10 +150,10 @@ CMS.Views.Alert = CMS.Views.SystemFeedback.extend({
     },
     hide: function () {
         this.$el.slideUp({
-            duration: this.slide_speed,
-            // Wait until the view is gone to rerender, or else it'll jump
-            complete: _.bind(CMS.Views.SystemFeedback.prototype.hide, this, arguments)
+            duration: this.slide_speed
         });
+        setTimeout(_.bind(CMS.Views.SystemFeedback.prototype.hide, this, arguments),
+                   this.slideSpeed);
     }
 });
 CMS.Views.Notification = CMS.Views.SystemFeedback.extend({
